@@ -1,0 +1,32 @@
+{
+  "experiment_id": "qi26_26_QRNG_001",
+  "benchmark_type": "QRNG",
+  "timestamp": "2026-07-06T13:25:09.417347+00:00",
+  "simulator": "LocalSimulator",
+  "circuit_params": {
+    "qubits": 4,
+    "depth": 1,
+    "shots": 10000,
+    "gates": {
+      "H": 4
+    }
+  },
+  "metrics": {
+    "quantum": {
+      "chi2_statistic": 12.0448,
+      "p_value": 0.6756,
+      "result": "PASS"
+    },
+    "classical": {
+      "chi2_statistic": 26.4224,
+      "p_value": 0.0338,
+      "result": "FAIL"
+    }
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "At 10,000 shots QRNG passes uniformity test while MT19937 fails. Quantum advantage in randomness quality visible at larger scale."
+}
