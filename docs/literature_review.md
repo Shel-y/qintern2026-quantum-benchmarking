@@ -4,21 +4,21 @@ The following papers mention the comparison of classical vs quantum algorithms o
 
 ## PRNG vs QRNG
 
-Title: Searching for evidence of algorithmic randomness and incomputability in the output of quantum random number generators
+### Title: Searching for evidence of algorithmic randomness and incomputability in the output of quantum random number generators
 
 DOI: https://doi.org/10.1016/j.physleta.2020.127032 (https://arxiv.org/pdf/2101.01238)
 
 NOTE: The authors compare variety of PRNG (including MT19937) and QRNG algos for randomness using five advanced tests (all the data is available and code as well) namely Borel normality and four versions of the Chaitin–Schwartz–Solovay–Strassen tests. Notably, they have taken data from ANU QRNG, and hence have no mention of data generation for QRNG. It is much more mathematically evolved for me and will take more time to go through the theorems and tests mentioned. 
 
 
-Title: Comparing pseudo- and quantum-random number generators with Monte Carlo simulations
+### Title: Comparing pseudo- and quantum-random number generators with Monte Carlo simulations
 
 DOI:  https://doi.org/10.1063/5.0199568
 
 NOTE: While the paper's main objective is to benchmark PRNG and QRNG with respect to the performance (critical exponent z) in a 2D Ising model, the paper reports separate testing of PRNG and QRNG on NIST test. Especially, in Results B 3 and Results D subsections.
 
 
-Title: A statistical test suite for random and pseudorandom number generators for cryptographic applications (NIST test suite)
+### Title: A statistical test suite for random and pseudorandom number generators for cryptographic applications (NIST test suite)
 
 Link: https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-22r1a.pdf 
 
@@ -30,14 +30,14 @@ NOTE: Widely used and recognised test suite for randomness. The generated sequen
 
 
 
-Title: Dieharder: A Random Number Test Suite
+### Title: Dieharder: A Random Number Test Suite
 
 Link:https://webhome.phy.duke.edu/~rgb/General/dieharder.php ; (The precursor Diehard: https://ani.stat.fsu.edu/diehard/)
 
 NOTE: The Dieharder tests are considered more extensive than NIST test suite and is very popular as well. 
 
 
-Title: TestU01: A C library for empirical testing of random number generators
+### Title: TestU01: A C library for empirical testing of random number generators
 
 DOI: https://doi.org/10.1145/1268776.1268777
 
@@ -45,14 +45,14 @@ Software: https://github.com/umontreal-simul/TestU01-2009
 
 NOTE: This should have least priority in our list as the other tests seem sufficient for our case. Moreover, this suite takes longer times to run relatively. 
 
-Title: Some Difficult-to-pass Tests of Randomness 
+### Title: Some Difficult-to-pass Tests of Randomness 
 
 Link: https://www.jstatsoft.org/article/view/v007i03 (you can also find the code link there)
 
 NOTE: This paper entails three tests outside of NIST test suite and described as hard (beyond Diehard suite) namely, gcd, gorilla, and bday tests. We can take up these tests after NIST and Dieharder.  
 
 
-Title: Statistical Tests for Random and Quantum Random Number Generators
+### Title: Statistical Tests for Random and Quantum Random Number Generators
 
 DOI: 10.12783/dtcse/cmee2017/20019
 
@@ -64,22 +64,22 @@ I think this would suffice for our purpose, if you feel you need some more infor
 ## Linear search vs Grover's Algo
 
 
-Question: Which problem are we going to solve? And how are we going to generate the dataset for that? Are we going to implement the best Grover algorithm known to compare with the classical search or the basic Grover with 5,6-qubits. 
+### Question: Which problem are we going to solve? And how are we going to generate the dataset for that? Are we going to implement the best Grover algorithm known to compare with the classical search or the basic Grover with 5,6-qubits. 
 
 
-Title:Better-than-classical Grover search via quantum error detection and suppression
+### Title:Better-than-classical Grover search via quantum error detection and suppression
 
 DOI: https://doi.org/10.1038/s41534-023-00794-6 
 
 NOTE: The authors show the quantum advantage over classical search after using measurement error mitigation and dynamic decoupling method. They showed the analysis for 2-5 qubits. I believe we will be using the exact same method of comparison hence this paper can help verify/motivate our method. 
 
-Title: Comparing Grover’s Quantum Search Algorithm with Classical Algorithm on Solving Satisfiability Problem
+### Title: Comparing Grover’s Quantum Search Algorithm with Classical Algorithm on Solving Satisfiability Problem
 
 Link: https://ieeexplore.ieee.org/document/9764017
 
 NOTE: The authors use Grover's algorithm to solve for the Boolean SAT problems and benchmark it against the classical solvers. They propose a new method of generalizing Grover algorithm for k-bit SAT problems. We can take some inspiration from the comparison part at the end. 
 
-Title: A Scalable 5,6-Qubit Grover’s Quantum Search Algorithm 
+### Title: A Scalable 5,6-Qubit Grover’s Quantum Search Algorithm 
 
 Link: https://arxiv.org/pdf/2205.00117
 
@@ -90,7 +90,7 @@ These are the most useful papers I could find, with metrics comfirmation we migh
 
 ## Classical Heuristic vs QAOA for MaxCut
 
-Title: Per-Shot Evaluation of QAOA on Max-Cut: A Black-Box Implementation Comparison with Goemans-Williamson 
+### Title: Per-Shot Evaluation of QAOA on Max-Cut: A Black-Box Implementation Comparison with Goemans-Williamson 
 
 DOI: https://doi.org/10.48550/arXiv.2604.08367
 
@@ -99,14 +99,14 @@ NOTE: The authors take a standard QAOA algorithm and test it against another cla
 For classical solvers we can use Gurobi or CVXPY library which are used as standards, but for full control over the algorithm and its implementation I think we can follow some basic algorithms like: D-Wave Ocean SDK or The Myklebust algorithm.
 
 
-Title: Sampling frequency thresholds for the quantum advantage of the quantum approximate optimization algorithm
+### Title: Sampling frequency thresholds for the quantum advantage of the quantum approximate optimization algorithm
 
 DOI: https://doi.org/10.1038/s41534-023-00718-4
 
 NOTE: The authors derive the minimum sampling frequency required for QAOA to match or outperform classical algorithms, which is around 10kHz (sampling frequency is basically the ratio of number of runs (candidate solutions generated) to the total time taken) for the circuit depth greater than 11. The authors have mentioned the implementations in detail, including the code and the dataset (link: https://github.com/danlkv/quantum-classical-time-maxcut), though I believe the analysis done here is overwhelming for our purpose, we will need to find better suited metrics.
 
 
-Title: Solving maximum cut problems by simulated annealing 
+### Title: Solving maximum cut problems by simulated annealing 
 
 DOI: https://doi.org/10.48550/arXiv.1505.03068
 
@@ -119,14 +119,14 @@ More exploration can be done once the metrics are chosen and implementation star
 
 I couldn't find any specific paper in which the concerned two protocols are compared in terms of resource utilization or computational performance.  
 
-Title: Quantum Key Distribution in the Classical Authenticated Key Exchange Framework
+### Title: Quantum Key Distribution in the Classical Authenticated Key Exchange Framework
 
 DOI: https://doi.org/10.48550/arXiv.1206.6150
 
 NOTE: A very thorough paper regarding security of BB84, mentions comparison of DH, BB84 and other algos on the lines of cryptographic concepts. No mention of resource utilization or comparison thereof. Gives a detailed mathematical explanation of BB84 algo as well. I don't think we will need any of it in our project, but if someone is interested in understanding BB84 in more detail can go through this and the references mentioned. 
 
 
-Title: A Comparative Evaluation of a Classical and Quantum Key Exchange System for use in a Web Application Security 
+### Title: A Comparative Evaluation of a Classical and Quantum Key Exchange System for use in a Web Application Security 
 
 Link: https://www.researchgate.net/publication/324476848_A_Comparative_Evaluation_of_a_Classical_and_Quantum_Key_Exchange_System_for_use_in_a_Web_Application_Security
 
