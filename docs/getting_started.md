@@ -1,7 +1,5 @@
 # Benchmarking Quantum Algorithms in the Cloud: A Comparative Study of Classical vs. Simulated Quantum Approaches on AWS
-<br>
 
-<br>
 **Requirements:**
 - Python, Qiskit, Amazon Braket SDK
 - AWS Cloud9, EC2, S3
