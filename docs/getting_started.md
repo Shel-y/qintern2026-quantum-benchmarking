@@ -1,27 +1,25 @@
 # Benchmarking Quantum Algorithms in the Cloud: A Comparative Study of Classical vs. Simulated Quantum Approaches on AWS
 <br>
 
-**To reproduce our paper, you need the following requirements**
 <br>
-Requirements:
+**Requirements:**
 - Python, Qiskit, Amazon Braket SDK
 - AWS Cloud9, EC2, S3
 - Terraform
 
-Installation:
+## Steps to Reproduce the Experiment
 
-AWS Boto3: AWS Python SDK
-<br>
-AWS Braket: for Quantum Simulation 
+Initial Steps:
+1. Clone this repository in your local machine / Jupyter Notebook / Kaggle / Google Colab / AWS Cloud9
+2. Change the ```.env.example``` file and setup the values accordingly.
+3. Run the following command on the terminal:
+
+*Local Machine & AWS Cloud9*
 ```bash
-pip install boto3 amazon-braket-sdk
+pip install -r requirements.txt
 ```
-Statistics and Visualization
+
+*Jupyter Notebook, Kaggle, & Google Colab*
 ```bash
-pip install numpy matplotlib scipy
-```
-Run command to verify installation:
-<br>
-```bash
-python3 -c "import boto3; import braket; import numpy; import matplotlib; import scipy; print('Installation successful!')"
+!pip install -r requirements.txt
 ```
