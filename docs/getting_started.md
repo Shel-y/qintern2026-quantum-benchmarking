@@ -7,7 +7,7 @@
 - AWS Cloud9, EC2, S3
 - Terraform
 
-## Steps to Reproduce the Experiment
+## Reproducibility Guide
 
 Initial Steps:
 1. Clone this repository in your local machine / Jupyter Notebook / Kaggle / Google Colab / AWS Cloud9
