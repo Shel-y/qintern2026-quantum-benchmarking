@@ -1,4 +1,5 @@
-Q# Benchmarking Quantum Algorithms in the Cloud: A Comparative Study of Classical vs. Simulated Quantum Approaches on AWS
+QIntern 2026 Project 26 
+# Benchmarking Quantum Algorithms in the Cloud: A Comparative Study of Classical vs. Simulated Quantum Approaches on AWS
 
 **Requirements:**
 - Python, Qiskit, Amazon Braket SDK
@@ -12,7 +13,7 @@ Initial Steps:
 2. Navigate the cloned repository
    * If you cloned the repository locally, navigate to the project folder through an IDE or terminal and continue the steps below.
    * If you cloned the repository to a cloud platform, step 5 is not applicable and skip over to step 6.
-4. Change the ```.env.example``` file and setup the values accordingly.
+4. Copy the ```.env.example``` environment variables to a new ```.env``` file and change the values accordingly
 5. Create a virtual environment:
 
 Windows
@@ -49,3 +50,8 @@ pip install -r requirements.txt
 !pip install -r requirements.txt
 ```
 
+After the steps above have been accomplished, you may modify the experiment code according to your specifications and run them.
+
+If you would like to use our infrastructure, head over to ```/infrastructure``` and click the repository link provided on the readme file.
+
+Afterwards, follow the steps provided within the repository.
