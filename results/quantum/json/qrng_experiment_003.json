@@ -1,0 +1,84 @@
+{
+  "experiment_id": "qi26_26_QRNG_003",
+  "benchmark_type": "QRNG",
+  "timestamp": "2026-07-13T14:26:16.019410+00:00",
+  "simulator": "LocalSimulator",
+  "circuit_params": {
+    "qubits": 4,
+    "depth": 1,
+    "gates": {
+      "H": 4
+    },
+    "output_bits": [
+      10000,
+      20000,
+      40000,
+      80000
+    ],
+    "shot_counts": [
+      2500,
+      5000,
+      10000,
+      20000
+    ]
+  },
+  "metrics": {
+    "trials": 10,
+    "configurations": [
+      {
+        "output_bits": 10000,
+        "shots": 2500,
+        "quantum": {
+          "mean_pvalue": 0.4128,
+          "fail_rate": "0/10"
+        },
+        "classical": {
+          "mean_pvalue": 0.4889,
+          "fail_rate": "0/10"
+        }
+      },
+      {
+        "output_bits": 20000,
+        "shots": 5000,
+        "quantum": {
+          "mean_pvalue": 0.6187,
+          "fail_rate": "0/10"
+        },
+        "classical": {
+          "mean_pvalue": 0.5449,
+          "fail_rate": "0/10"
+        }
+      },
+      {
+        "output_bits": 40000,
+        "shots": 10000,
+        "quantum": {
+          "mean_pvalue": 0.5306,
+          "fail_rate": "0/10"
+        },
+        "classical": {
+          "mean_pvalue": 0.4704,
+          "fail_rate": "1/10"
+        }
+      },
+      {
+        "output_bits": 80000,
+        "shots": 20000,
+        "quantum": {
+          "mean_pvalue": 0.4054,
+          "fail_rate": "1/10"
+        },
+        "classical": {
+          "mean_pvalue": 0.499,
+          "fail_rate": "0/10"
+        }
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "Multiple trials using agreed protocol with Classical Lead (Kanishka). 4 qubits, 10 trials per configuration. Quantum passed all trials at 10k and 20k bits. Classical failed once at 40k bits. Both generators broadly uniform across all configurations."
+}

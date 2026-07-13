@@ -1,0 +1,32 @@
+{
+  "experiment_id": "qi26_26_QRNG_001",
+  "benchmark_type": "QRNG",
+  "timestamp": "2026-07-13T14:02:15.229978+00:00",
+  "simulator": "LocalSimulator",
+  "circuit_params": {
+    "qubits": 4,
+    "depth": 1,
+    "shots": 10000,
+    "gates": {
+      "H": 4
+    }
+  },
+  "metrics": {
+    "quantum": {
+      "chi2_statistic": 16.7296,
+      "p_value": 0.3353,
+      "result": "PASS"
+    },
+    "classical": {
+      "chi2_statistic": 20.0384,
+      "p_value": 0.1705,
+      "result": "PASS"
+    }
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "Both QRNG and MT19937 pass chi-squared uniformity test at 10,000 shots. Quantum p=0.3353, Classical p=0.1705."
+}
