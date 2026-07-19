@@ -1,0 +1,72 @@
+{
+  "experiment_id": "qi26_26_Grover_003",
+  "benchmark_type": "Grover_Performance",
+  "timestamp": "2026-07-19T04:46:18.757628+00:00",
+  "simulator": "LocalSimulator",
+  "protocol": {
+    "database_sizes": [
+      8,
+      16,
+      24,
+      32
+    ],
+    "optimal_iterations": {
+      "8": 2,
+      "16": 3,
+      "24": 4,
+      "32": 4
+    },
+    "shots": {
+      "8": 1024,
+      "16": 1024,
+      "24": 8192,
+      "32": 8192
+    }
+  },
+  "metrics": {
+    "performance": [
+      {
+        "N": 8,
+        "n_iterations": 2,
+        "shots": 1024,
+        "runtime_seconds": 0.5799,
+        "throughput_qps": 1765.76,
+        "cpu_time_seconds": 0.58,
+        "success_probability": 0.9336
+      },
+      {
+        "N": 16,
+        "n_iterations": 3,
+        "shots": 1024,
+        "runtime_seconds": 0.0354,
+        "throughput_qps": 28928.18,
+        "cpu_time_seconds": 0.03,
+        "success_probability": 0.96
+      },
+      {
+        "N": 24,
+        "n_iterations": 4,
+        "shots": 8192,
+        "runtime_seconds": 0.1256,
+        "throughput_qps": 65220.4,
+        "cpu_time_seconds": 0.12,
+        "success_probability": 0.9995
+      },
+      {
+        "N": 32,
+        "n_iterations": 4,
+        "shots": 8192,
+        "runtime_seconds": 0.1553,
+        "throughput_qps": 52760.49,
+        "cpu_time_seconds": 0.15,
+        "success_probability": 0.9995
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "Performance analysis for Grover's algorithm. Throughput measured as oracle queries per second. N=8 shows slower runtime due to cold start. N=16,24,32 show consistent scaling. CPU time closely matches wall clock time."
+}

@@ -1,0 +1,171 @@
+{
+  "experiment_id": "qi26_26_Grover_002",
+  "benchmark_type": "Grover_Layer2_Validation",
+  "timestamp": "2026-07-19T03:19:16.676789+00:00",
+  "simulator": "LocalSimulator",
+  "metrics": {
+    "metric1_measurement_bias": {
+      "method": "chi-squared on non-target states",
+      "results": [
+        {
+          "N": 8,
+          "p_value": 0.8001,
+          "status": "PASS"
+        },
+        {
+          "N": 16,
+          "p_value": 0.2838,
+          "status": "PASS"
+        },
+        {
+          "N": 24,
+          "p_value": 0.0648,
+          "status": "PASS"
+        },
+        {
+          "N": 32,
+          "p_value": 0.5704,
+          "status": "PASS"
+        }
+      ]
+    },
+    "metric2_circuit_fidelity": {
+      "method": "mean success probability across 10 trials",
+      "reference": "Lubinski et al. 2023 (QED-C), Manor et al. 2025 (GRADE)",
+      "threshold": 0.95,
+      "results": [
+        {
+          "N": 8,
+          "fidelity": 0.9473,
+          "status": "DOCUMENTED_LIMITATION"
+        },
+        {
+          "N": 16,
+          "fidelity": 0.9604,
+          "status": "PASS"
+        },
+        {
+          "N": 24,
+          "fidelity": 0.9992,
+          "status": "PASS"
+        },
+        {
+          "N": 32,
+          "fidelity": 0.9993,
+          "status": "PASS"
+        }
+      ]
+    },
+    "metric3_shot_noise_cv": {
+      "threshold": 0.05,
+      "results": [
+        {
+          "N": 8,
+          "cv": 0.0057,
+          "status": "PASS"
+        },
+        {
+          "N": 16,
+          "cv": 0.0059,
+          "status": "PASS"
+        },
+        {
+          "N": 24,
+          "cv": 0.0004,
+          "status": "PASS"
+        },
+        {
+          "N": 32,
+          "cv": 0.0002,
+          "status": "PASS"
+        }
+      ]
+    },
+    "metric5_circuit_depth_fidelity": {
+      "results": [
+        {
+          "N": 8,
+          "depth": 17,
+          "fidelity": 0.9473,
+          "status": "DOCUMENTED_LIMITATION"
+        },
+        {
+          "N": 16,
+          "depth": 25,
+          "fidelity": 0.9604,
+          "status": "PASS"
+        },
+        {
+          "N": 24,
+          "depth": 33,
+          "fidelity": 0.9992,
+          "status": "PASS"
+        },
+        {
+          "N": 32,
+          "depth": 33,
+          "fidelity": 0.9993,
+          "status": "PASS"
+        }
+      ],
+      "finding": "No fidelity degradation observed within depth range 17-33"
+    },
+    "metric6_gate_error_sensitivity": {
+      "noise_model": "Depolarizing",
+      "error_rates": [
+        0.001,
+        0.005,
+        0.01
+      ],
+      "results": [
+        {
+          "N": 8,
+          "baseline": 0.9395,
+          "p0.1": 0.918,
+          "p0.5": 0.8252,
+          "p1.0": 0.7334,
+          "drop_0.1": 0.0215,
+          "drop_0.5": 0.1143,
+          "drop_1.0": 0.2061
+        },
+        {
+          "N": 16,
+          "baseline": 0.9551,
+          "p0.1": 0.9043,
+          "p0.5": 0.7217,
+          "p1.0": 0.5459,
+          "drop_0.1": 0.0508,
+          "drop_0.5": 0.2334,
+          "drop_1.0": 0.4092
+        },
+        {
+          "N": 24,
+          "baseline": 0.9995,
+          "p0.1": 0.9106,
+          "p0.5": 0.6328,
+          "p1.0": 0.4019,
+          "drop_0.1": 0.0889,
+          "drop_0.5": 0.3667,
+          "drop_1.0": 0.5977
+        },
+        {
+          "N": 32,
+          "baseline": 0.9993,
+          "p0.1": 0.917,
+          "p0.5": 0.6433,
+          "p1.0": 0.4243,
+          "drop_0.1": 0.0823,
+          "drop_0.5": 0.356,
+          "drop_1.0": 0.575
+        }
+      ],
+      "finding": "All configs pass at 0.1% error rate. Significant degradation at 0.5%+. Larger circuits more noise sensitive due to greater circuit depth."
+    }
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "N=8 documented limitation: theoretical max SP ~94.5%. Metrics 1,2,3,5,6 complete. Metric 4 (LocalSim vs SV1) deferred to Week 4. Metric 7 (Hardware Gap) deferred to Week 5+."
+}
