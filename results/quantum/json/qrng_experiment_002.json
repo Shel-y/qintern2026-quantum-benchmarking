@@ -1,0 +1,67 @@
+{
+  "experiment_id": "qi26_26_QRNG_002",
+  "benchmark_type": "QRNG",
+  "timestamp": "2026-07-19T03:34:18.362104+00:00",
+  "simulator": "LocalSimulator",
+  "circuit_params": {
+    "qubits": 4,
+    "depth": 1,
+    "gates": {
+      "H": 4
+    },
+    "shot_counts": [
+      2500,
+      5000,
+      10000,
+      20000
+    ],
+    "output_bits": [
+      10000,
+      20000,
+      40000,
+      80000
+    ]
+  },
+  "metrics": {
+    "shot_sweep": [
+      {
+        "shots": 2500,
+        "output_bits": 10000,
+        "quantum_p": 0.8384,
+        "classical_p": 0.0305,
+        "quantum_result": "PASS",
+        "classical_result": "FAIL"
+      },
+      {
+        "shots": 5000,
+        "output_bits": 20000,
+        "quantum_p": 0.1835,
+        "classical_p": 0.6197,
+        "quantum_result": "PASS",
+        "classical_result": "PASS"
+      },
+      {
+        "shots": 10000,
+        "output_bits": 40000,
+        "quantum_p": 0.4988,
+        "classical_p": 0.6365,
+        "quantum_result": "PASS",
+        "classical_result": "PASS"
+      },
+      {
+        "shots": 20000,
+        "output_bits": 80000,
+        "quantum_p": 0.7164,
+        "classical_p": 0.9487,
+        "quantum_result": "PASS",
+        "classical_result": "PASS"
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "Shot sweep using agreed protocol with Classical Lead. 4 qubits, matching output bits: 10k/20k/40k/80k. Classical failed at 10k bits (2,500 shots, p=0.0305). Quantum passed all configurations."
+}

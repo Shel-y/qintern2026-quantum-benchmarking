@@ -1,0 +1,99 @@
+{
+  "experiment_id": "qi26_26_QRNG_006",
+  "benchmark_type": "QRNG_Performance",
+  "timestamp": "2026-07-19T03:39:56.304391+00:00",
+  "simulator": "LocalSimulator",
+  "circuit_params": {
+    "qubits": 4,
+    "depth": 1,
+    "gates": {
+      "H": 4
+    },
+    "output_bits": [
+      10000,
+      20000,
+      40000,
+      80000
+    ],
+    "shot_counts": [
+      2500,
+      5000,
+      10000,
+      20000
+    ]
+  },
+  "metrics": {
+    "configurations": [
+      {
+        "output_bits": 10000,
+        "shots": 2500,
+        "quantum": {
+          "time_seconds": 0.0258,
+          "throughput_bps": 386960.54,
+          "shannon_entropy": 3.9982,
+          "cpu_time_seconds": 0.03
+        },
+        "classical": {
+          "time_seconds": 0.0068,
+          "throughput_bps": 1477127.66,
+          "shannon_entropy": 3.9948,
+          "cpu_time_seconds": 0.01
+        }
+      },
+      {
+        "output_bits": 20000,
+        "shots": 5000,
+        "quantum": {
+          "time_seconds": 0.0392,
+          "throughput_bps": 509781.53,
+          "shannon_entropy": 3.9984,
+          "cpu_time_seconds": 0.04
+        },
+        "classical": {
+          "time_seconds": 0.0137,
+          "throughput_bps": 1463265.42,
+          "shannon_entropy": 3.9987,
+          "cpu_time_seconds": 0.01
+        }
+      },
+      {
+        "output_bits": 40000,
+        "shots": 10000,
+        "quantum": {
+          "time_seconds": 0.0673,
+          "throughput_bps": 594371.87,
+          "shannon_entropy": 3.9991,
+          "cpu_time_seconds": 0.07
+        },
+        "classical": {
+          "time_seconds": 0.0272,
+          "throughput_bps": 1472137.59,
+          "shannon_entropy": 3.9993,
+          "cpu_time_seconds": 0.03
+        }
+      },
+      {
+        "output_bits": 80000,
+        "shots": 20000,
+        "quantum": {
+          "time_seconds": 0.1297,
+          "throughput_bps": 617001.09,
+          "shannon_entropy": 3.9991,
+          "cpu_time_seconds": 0.13
+        },
+        "classical": {
+          "time_seconds": 0.0563,
+          "throughput_bps": 1422075.15,
+          "shannon_entropy": 3.9995,
+          "cpu_time_seconds": 0.05
+        }
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "Classical MT19937 is ~2.5x faster than quantum LocalSimulator. Both achieve near-maximum Shannon entropy (>= 3.994 bits). Quantum throughput scales better with output size. Classical advantage is in raw speed; quantum advantage is in randomness guarantees."
+}

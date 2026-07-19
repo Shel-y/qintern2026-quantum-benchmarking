@@ -1,0 +1,94 @@
+{
+  "experiment_id": "qi26_26_QRNG_007",
+  "benchmark_type": "QRNG_Layer2_Metrics5and6",
+  "timestamp": "2026-07-19T03:46:53.423790+00:00",
+  "simulator": "LocalSimulator + braket_dm",
+  "circuit_params": {
+    "qubits": 4,
+    "depth": 1,
+    "gates": {
+      "H": 4
+    },
+    "output_bits": [
+      10000,
+      20000,
+      40000,
+      80000
+    ],
+    "shot_counts": [
+      2500,
+      5000,
+      10000,
+      20000
+    ]
+  },
+  "metrics": {
+    "metric5_circuit_depth": {
+      "depth": 1,
+      "dR2_values": {
+        "10000_bits": 0.9996,
+        "20000_bits": 0.9998,
+        "40000_bits": 0.9999,
+        "80000_bits": 1.0
+      },
+      "finding": "QRNG circuit depth is always 1. No depth-related fidelity degradation possible by design."
+    },
+    "metric6_gate_error_sensitivity": {
+      "noise_model": "Depolarizing",
+      "error_rates_tested": [
+        "0.1%",
+        "0.5%",
+        "1.0%"
+      ],
+      "results": [
+        {
+          "bits": 10000,
+          "shots": 2500,
+          "baseline_dR2": 0.9997,
+          "error_rates": {
+            "0.1%": 0.9996,
+            "0.5%": 0.9997,
+            "1.0%": 0.9997
+          }
+        },
+        {
+          "bits": 20000,
+          "shots": 5000,
+          "baseline_dR2": 0.9998,
+          "error_rates": {
+            "0.1%": 0.9999,
+            "0.5%": 0.9998,
+            "1.0%": 0.9998
+          }
+        },
+        {
+          "bits": 40000,
+          "shots": 10000,
+          "baseline_dR2": 0.9999,
+          "error_rates": {
+            "0.1%": 0.9999,
+            "0.5%": 0.9999,
+            "1.0%": 0.9999
+          }
+        },
+        {
+          "bits": 80000,
+          "shots": 20000,
+          "baseline_dR2": 1.0,
+          "error_rates": {
+            "0.1%": 0.9999,
+            "0.5%": 0.9999,
+            "1.0%": 0.9999
+          }
+        }
+      ],
+      "finding": "QRNG fidelity remains above 0.9996 at all error rates. Depth=1 circuit is highly resilient to depolarizing noise."
+    }
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "QRNG is far more noise resilient than Grover's algorithm. Single Hadamard layer means minimal gate error accumulation. All configurations pass at 0.1%, 0.5%, and 1.0% depolarizing error rates."
+}
