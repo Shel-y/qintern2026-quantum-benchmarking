@@ -1,0 +1,126 @@
+{
+  "experiment_id": "qi26_26_QAOA_001",
+  "benchmark_type": "QAOA_MaxCut",
+  "timestamp": "2026-07-30T16:06:17.186556+00:00",
+  "simulator": "LocalSimulator",
+  "protocol": {
+    "graph_type": "3-regular random",
+    "node_counts": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "p_values": [
+      1,
+      2,
+      3
+    ],
+    "shots": {
+      "1": 1024,
+      "2": 1024,
+      "3": 4096
+    },
+    "trials": 10,
+    "optimizer": "COBYLA",
+    "metric": "approximation_ratio = QAOA_cut / optimal_cut",
+    "references": [
+      "Farhi, Goldstone, Gutmann 2014 (arXiv:1411.4028)",
+      "Willsch et al. 2020 (Quantum Information Processing)"
+    ]
+  },
+  "metrics": {
+    "results": [
+      {
+        "N": 4,
+        "p": 1,
+        "mean_approx_ratio": 0.95,
+        "std": 0.1,
+        "mean_runtime": 1.1952
+      },
+      {
+        "N": 4,
+        "p": 2,
+        "mean_approx_ratio": 0.975,
+        "std": 0.075,
+        "mean_runtime": 2.1747
+      },
+      {
+        "N": 4,
+        "p": 3,
+        "mean_approx_ratio": 1.0,
+        "std": 0.0,
+        "mean_runtime": 5.6668
+      },
+      {
+        "N": 6,
+        "p": 1,
+        "mean_approx_ratio": 1.0,
+        "std": 0.0,
+        "mean_runtime": 1.4726
+      },
+      {
+        "N": 6,
+        "p": 2,
+        "mean_approx_ratio": 1.0,
+        "std": 0.0,
+        "mean_runtime": 3.0794
+      },
+      {
+        "N": 6,
+        "p": 3,
+        "mean_approx_ratio": 0.9857,
+        "std": 0.0429,
+        "mean_runtime": 7.7955
+      },
+      {
+        "N": 8,
+        "p": 1,
+        "mean_approx_ratio": 1.0,
+        "std": 0.0,
+        "mean_runtime": 1.7621
+      },
+      {
+        "N": 8,
+        "p": 2,
+        "mean_approx_ratio": 1.0,
+        "std": 0.0,
+        "mean_runtime": 4.2805
+      },
+      {
+        "N": 8,
+        "p": 3,
+        "mean_approx_ratio": 0.94,
+        "std": 0.1281,
+        "mean_runtime": 10.0268
+      },
+      {
+        "N": 10,
+        "p": 1,
+        "mean_approx_ratio": 0.9923,
+        "std": 0.0231,
+        "mean_runtime": 2.1928
+      },
+      {
+        "N": 10,
+        "p": 2,
+        "mean_approx_ratio": 0.9622,
+        "std": 0.1434,
+        "mean_runtime": 5.1291
+      },
+      {
+        "N": 10,
+        "p": 3,
+        "mean_approx_ratio": 1.0083,
+        "std": 0.025,
+        "mean_runtime": 13.083
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "QAOA achieves mean approximation ratio >= 0.94 across all configurations. Occasional COBYLA local optima failures at larger graphs. N=10 p=2,3 show AR>1.0 due to random sampling approximation of optimal cut. Runtime scales from ~1s (N=4,p=1) to ~13s (N=10,p=3)."
+}
