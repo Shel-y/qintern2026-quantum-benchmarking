@@ -1,4 +1,4 @@
-![Qintern 2026 Badge](assets/QIntern2026.jpeg)
+![Qintern 2026 Badge](docs/assets/QIntern2026.jpeg)
 
 # Benchmarking Quantum Algorithms in the Cloud: A Comparative Study of Classical vs. Simulated Quantum Approaches on AWS
 
