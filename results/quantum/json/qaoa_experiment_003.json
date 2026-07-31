@@ -140,5 +140,5 @@
     "python_version": "3.12",
     "region": "us-east-1"
   },
-  "notes": "Runtime scales from ~0.9s (N=4,p=1) to ~12.9s (N=10,p=3). CPU time closely matches wall clock time. Throughput varies between 155-1143 shots/second. N=10 p=2 shows lowest throughput due to larger circuit and optimizer overhead."
+  "notes": "Runtime scales from ~0.9s (N=4,p=1) to ~12.9s (N=10,p=3). CPU time closely matches wall clock time. Throughput varies between 155-1143 shots/second. N=10 p=2 shows lowest throughput due to larger circuit and optimizer overhead. Peak RAM not measured — psutil memory delta shows 0.0 for short-running circuits in Colab environment. This is a known Colab limitation, not a measurement error."
 }
