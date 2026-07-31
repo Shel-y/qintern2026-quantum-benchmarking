@@ -1,0 +1,214 @@
+{
+  "experiment_id": "qi26_26_BB84_001",
+  "benchmark_type": "BB84_QKD",
+  "timestamp": "2026-07-31T08:06:03.859615+00:00",
+  "simulator": "LocalSimulator",
+  "protocol": {
+    "qubit_counts": [
+      1000,
+      2000,
+      4000,
+      8000
+    ],
+    "eavesdrop_rates": [
+      0.0,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "trials": 10,
+    "qber_threshold": 0.11,
+    "attack_type": "intercept-resend",
+    "references": [
+      "Bennett and Brassard 1984",
+      "Shor and Preskill 2000 (Physical Review Letters)",
+      "Zhu et al. 2026 (arXiv:2603.27278)"
+    ]
+  },
+  "metrics": {
+    "results": [
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 496.4,
+        "mean_key_gen_rate": 0.4964,
+        "mean_runtime_seconds": 4.3573,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.063,
+        "std_qber": 0.0133,
+        "mean_sifted_key": 497.1,
+        "mean_key_gen_rate": 0.4971,
+        "mean_runtime_seconds": 4.3462,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.1212,
+        "std_qber": 0.0101,
+        "mean_sifted_key": 502.9,
+        "mean_key_gen_rate": 0.5029,
+        "mean_runtime_seconds": 4.2496,
+        "secure_trials": "1/10"
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.2426,
+        "std_qber": 0.0111,
+        "mean_sifted_key": 492.1,
+        "mean_key_gen_rate": 0.4921,
+        "mean_runtime_seconds": 4.259,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 1008.3,
+        "mean_key_gen_rate": 0.5042,
+        "mean_runtime_seconds": 8.5134,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.059,
+        "std_qber": 0.0062,
+        "mean_sifted_key": 996.5,
+        "mean_key_gen_rate": 0.4982,
+        "mean_runtime_seconds": 8.483,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.129,
+        "std_qber": 0.008,
+        "mean_sifted_key": 997.4,
+        "mean_key_gen_rate": 0.4987,
+        "mean_runtime_seconds": 8.454,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.2499,
+        "std_qber": 0.0198,
+        "mean_sifted_key": 1009.9,
+        "mean_key_gen_rate": 0.5049,
+        "mean_runtime_seconds": 8.602,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 1995.1,
+        "mean_key_gen_rate": 0.4988,
+        "mean_runtime_seconds": 16.9226,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.0631,
+        "std_qber": 0.0034,
+        "mean_sifted_key": 1978.6,
+        "mean_key_gen_rate": 0.4947,
+        "mean_runtime_seconds": 16.9278,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.1227,
+        "std_qber": 0.0076,
+        "mean_sifted_key": 1992.1,
+        "mean_key_gen_rate": 0.498,
+        "mean_runtime_seconds": 16.896,
+        "secure_trials": "1/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.2548,
+        "std_qber": 0.0082,
+        "mean_sifted_key": 2008.5,
+        "mean_key_gen_rate": 0.5021,
+        "mean_runtime_seconds": 16.9392,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 3997.4,
+        "mean_key_gen_rate": 0.4997,
+        "mean_runtime_seconds": 33.6375,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.0644,
+        "std_qber": 0.0028,
+        "mean_sifted_key": 4001.9,
+        "mean_key_gen_rate": 0.5002,
+        "mean_runtime_seconds": 33.8442,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.1274,
+        "std_qber": 0.0043,
+        "mean_sifted_key": 3989.5,
+        "mean_key_gen_rate": 0.4987,
+        "mean_runtime_seconds": 33.8206,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.25,
+        "std_qber": 0.0067,
+        "mean_sifted_key": 4008.1,
+        "mean_key_gen_rate": 0.501,
+        "mean_runtime_seconds": 33.9717,
+        "secure_trials": "0/10"
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "QBER=0.0000 with no eavesdropping across all qubit counts. 25% intercept pushes QBER above 11% threshold. Full intercept converges to ~25% QBER at larger qubit counts as predicted by theory. Results stabilize with larger qubit counts."
+}

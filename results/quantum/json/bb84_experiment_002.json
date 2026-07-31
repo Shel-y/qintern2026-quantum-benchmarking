@@ -1,0 +1,192 @@
+{
+  "experiment_id": "qi26_26_BB84_002",
+  "benchmark_type": "BB84_Layer2_Validation",
+  "timestamp": "2026-07-31T08:13:37.429484+00:00",
+  "simulator": "LocalSimulator",
+  "metrics": {
+    "metric1_measurement_bias": {
+      "method": "QBER = 0.0 with no eavesdropping",
+      "results": [
+        {
+          "n_qubits": 1000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 2000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 4000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 8000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        }
+      ]
+    },
+    "metric2_circuit_fidelity": {
+      "method": "QBER < 0.01 with no eavesdropping",
+      "threshold": 0.01,
+      "results": [
+        {
+          "n_qubits": 1000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 2000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 4000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 8000,
+          "mean_qber": 0.0,
+          "status": "PASS"
+        }
+      ]
+    },
+    "metric3_shot_noise_cv": {
+      "threshold": 0.05,
+      "note": "CV improves with larger qubit counts. All pass at 8,000 qubits.",
+      "results": [
+        {
+          "n_qubits": 1000,
+          "eve": "0%",
+          "cv": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 1000,
+          "eve": "25%",
+          "cv": 0.2111,
+          "status": "FAIL"
+        },
+        {
+          "n_qubits": 1000,
+          "eve": "50%",
+          "cv": 0.0833,
+          "status": "FAIL"
+        },
+        {
+          "n_qubits": 1000,
+          "eve": "100%",
+          "cv": 0.0458,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 2000,
+          "eve": "0%",
+          "cv": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 2000,
+          "eve": "25%",
+          "cv": 0.1051,
+          "status": "FAIL"
+        },
+        {
+          "n_qubits": 2000,
+          "eve": "50%",
+          "cv": 0.062,
+          "status": "FAIL"
+        },
+        {
+          "n_qubits": 2000,
+          "eve": "100%",
+          "cv": 0.0792,
+          "status": "FAIL"
+        },
+        {
+          "n_qubits": 4000,
+          "eve": "0%",
+          "cv": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 4000,
+          "eve": "25%",
+          "cv": 0.0539,
+          "status": "FAIL"
+        },
+        {
+          "n_qubits": 4000,
+          "eve": "50%",
+          "cv": 0.0619,
+          "status": "FAIL"
+        },
+        {
+          "n_qubits": 4000,
+          "eve": "100%",
+          "cv": 0.0322,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 8000,
+          "eve": "0%",
+          "cv": 0.0,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 8000,
+          "eve": "25%",
+          "cv": 0.0435,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 8000,
+          "eve": "50%",
+          "cv": 0.0338,
+          "status": "PASS"
+        },
+        {
+          "n_qubits": 8000,
+          "eve": "100%",
+          "cv": 0.0268,
+          "status": "PASS"
+        }
+      ]
+    },
+    "metric5_circuit_depth": {
+      "max_depth": 4,
+      "finding": "BB84 circuit depth is 1-4 gates per qubit. No depth-related fidelity issues.",
+      "status": "PASS"
+    },
+    "metric6_gate_error_sensitivity": {
+      "noise_model": "Depolarizing",
+      "test_qubits": 200,
+      "error_rates": [
+        0.001,
+        0.005,
+        0.01
+      ],
+      "results": [
+        {
+          "baseline_qber": 0.0,
+          "error_rates": {
+            "0.1%": 0.003,
+            "0.5%": 0.0059,
+            "1.0%": 0.0202
+          }
+        }
+      ],
+      "finding": "BB84 highly resilient to noise. QBER stays below 11% threshold at all error rates."
+    }
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "All metrics pass at 8,000 qubits. CV failures at smaller qubit counts due to statistical variance in QBER estimation. BB84 is highly noise resilient due to shallow circuit depth."
+}

@@ -1,0 +1,191 @@
+{
+  "experiment_id": "qi26_26_BB84_003",
+  "benchmark_type": "BB84_Performance",
+  "timestamp": "2026-07-31T08:38:00.922194+00:00",
+  "simulator": "LocalSimulator",
+  "protocol": {
+    "qubit_counts": [
+      1000,
+      2000,
+      4000,
+      8000
+    ],
+    "eavesdrop_rates": [
+      0.0,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "attack_type": "intercept-resend"
+  },
+  "metrics": {
+    "performance": [
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.0,
+        "runtime_seconds": 8.6844,
+        "throughput_qps": 115.15,
+        "cpu_time_seconds": 6.19,
+        "peak_ram_mb": 0.0,
+        "qber": 0.0,
+        "secure": true
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.25,
+        "runtime_seconds": 4.6344,
+        "throughput_qps": 215.78,
+        "cpu_time_seconds": 4.64,
+        "peak_ram_mb": 0.0,
+        "qber": 0.0842,
+        "secure": true
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.5,
+        "runtime_seconds": 4.4809,
+        "throughput_qps": 223.17,
+        "cpu_time_seconds": 4.48,
+        "peak_ram_mb": 0.0,
+        "qber": 0.1484,
+        "secure": false
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 1.0,
+        "runtime_seconds": 4.9396,
+        "throughput_qps": 202.45,
+        "cpu_time_seconds": 4.89,
+        "peak_ram_mb": 0.0,
+        "qber": 0.2475,
+        "secure": false
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.0,
+        "runtime_seconds": 9.5574,
+        "throughput_qps": 209.26,
+        "cpu_time_seconds": 9.5,
+        "peak_ram_mb": 0.18,
+        "qber": 0.0,
+        "secure": true
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.25,
+        "runtime_seconds": 9.7247,
+        "throughput_qps": 205.66,
+        "cpu_time_seconds": 9.71,
+        "peak_ram_mb": 0.01,
+        "qber": 0.0776,
+        "secure": true
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.5,
+        "runtime_seconds": 9.843,
+        "throughput_qps": 203.19,
+        "cpu_time_seconds": 9.82,
+        "peak_ram_mb": 0.0,
+        "qber": 0.1165,
+        "secure": false
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 1.0,
+        "runtime_seconds": 9.7547,
+        "throughput_qps": 205.03,
+        "cpu_time_seconds": 9.71,
+        "peak_ram_mb": 0.0,
+        "qber": 0.2421,
+        "secure": false
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.0,
+        "runtime_seconds": 19.3253,
+        "throughput_qps": 206.98,
+        "cpu_time_seconds": 19.24,
+        "peak_ram_mb": 0.63,
+        "qber": 0.0,
+        "secure": true
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.25,
+        "runtime_seconds": 18.4633,
+        "throughput_qps": 216.65,
+        "cpu_time_seconds": 18.4,
+        "peak_ram_mb": 0.0,
+        "qber": 0.0539,
+        "secure": true
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.5,
+        "runtime_seconds": 18.3281,
+        "throughput_qps": 218.24,
+        "cpu_time_seconds": 18.25,
+        "peak_ram_mb": 0.01,
+        "qber": 0.1259,
+        "secure": false
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 1.0,
+        "runtime_seconds": 17.269,
+        "throughput_qps": 231.63,
+        "cpu_time_seconds": 17.24,
+        "peak_ram_mb": 0.0,
+        "qber": 0.2608,
+        "secure": false
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.0,
+        "runtime_seconds": 34.2278,
+        "throughput_qps": 233.73,
+        "cpu_time_seconds": 34.12,
+        "peak_ram_mb": 0.0,
+        "qber": 0.0,
+        "secure": true
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.25,
+        "runtime_seconds": 36.3549,
+        "throughput_qps": 220.05,
+        "cpu_time_seconds": 36.25,
+        "peak_ram_mb": 0.0,
+        "qber": 0.0597,
+        "secure": true
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.5,
+        "runtime_seconds": 36.5687,
+        "throughput_qps": 218.77,
+        "cpu_time_seconds": 36.33,
+        "peak_ram_mb": 0.0,
+        "qber": 0.1233,
+        "secure": false
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 1.0,
+        "runtime_seconds": 36.1643,
+        "throughput_qps": 221.21,
+        "cpu_time_seconds": 35.99,
+        "peak_ram_mb": 0.0,
+        "qber": 0.2496,
+        "secure": false
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "Runtime scales linearly with qubit count (~4.5-8.7s for 1k to ~34-36s for 8k). Throughput stable at ~200-230 qubits/second. CPU time closely matches wall clock time. Peak RAM delta is minimal (0.00-0.63 MB) \u2014 Colab psutil shows small memory changes for BB84 circuits."
+}
