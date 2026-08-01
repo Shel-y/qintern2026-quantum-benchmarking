@@ -1,0 +1,247 @@
+{
+  "experiment_id": "qi26_26_BB84_001",
+  "benchmark_type": "BB84_QKD",
+  "timestamp": "2026-08-01T16:54:11.284791+00:00",
+  "simulator": "LocalSimulator",
+  "protocol": {
+    "qubit_counts": [
+      1000,
+      2000,
+      4000,
+      8000
+    ],
+    "eavesdrop_rates": [
+      0.0,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "trials": 10,
+    "qber_threshold": 0.11,
+    "attack_type": "intercept-resend",
+    "secure_key_rate_formula": "R = 1 - 2H(QBER) (Shor-Preskill 2000)",
+    "references": [
+      "Bennett and Brassard 1984",
+      "Shor and Preskill 2000 (Physical Review Letters)",
+      "Rath, Panth, Bhaskar 2026 (arXiv:2603.27278)"
+    ]
+  },
+  "metrics": {
+    "results": [
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 497.3,
+        "mean_key_gen_rate": 0.4973,
+        "mean_secure_key_rate": 1.0,
+        "mean_secure_key_bits": 497.3,
+        "mean_runtime_seconds": 7.5195,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.064,
+        "std_qber": 0.0123,
+        "mean_sifted_key": 496.4,
+        "mean_key_gen_rate": 0.4964,
+        "mean_secure_key_rate": 0.3176,
+        "mean_secure_key_bits": 156.9,
+        "mean_runtime_seconds": 7.057,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.1282,
+        "std_qber": 0.0099,
+        "mean_sifted_key": 498.4,
+        "mean_key_gen_rate": 0.4984,
+        "mean_secure_key_rate": 0.0014,
+        "mean_secure_key_bits": 0.7,
+        "mean_runtime_seconds": 7.0228,
+        "secure_trials": "1/10"
+      },
+      {
+        "n_qubits": 1000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.2577,
+        "std_qber": 0.0206,
+        "mean_sifted_key": 499.1,
+        "mean_key_gen_rate": 0.4991,
+        "mean_secure_key_rate": 0.0,
+        "mean_secure_key_bits": 0.0,
+        "mean_runtime_seconds": 7.0754,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 1004.8,
+        "mean_key_gen_rate": 0.5024,
+        "mean_secure_key_rate": 1.0,
+        "mean_secure_key_bits": 1004.8,
+        "mean_runtime_seconds": 14.1215,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.0602,
+        "std_qber": 0.0087,
+        "mean_sifted_key": 1003.0,
+        "mean_key_gen_rate": 0.5015,
+        "mean_secure_key_rate": 0.3451,
+        "mean_secure_key_bits": 345.1,
+        "mean_runtime_seconds": 14.1692,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.1231,
+        "std_qber": 0.0087,
+        "mean_sifted_key": 994.6,
+        "mean_key_gen_rate": 0.4973,
+        "mean_secure_key_rate": 0.002,
+        "mean_secure_key_bits": 2.0,
+        "mean_runtime_seconds": 13.9331,
+        "secure_trials": "1/10"
+      },
+      {
+        "n_qubits": 2000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.2506,
+        "std_qber": 0.0093,
+        "mean_sifted_key": 1005.7,
+        "mean_key_gen_rate": 0.5028,
+        "mean_secure_key_rate": 0.0,
+        "mean_secure_key_bits": 0.0,
+        "mean_runtime_seconds": 14.1956,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 1998.3,
+        "mean_key_gen_rate": 0.4996,
+        "mean_secure_key_rate": 1.0,
+        "mean_secure_key_bits": 1998.3,
+        "mean_runtime_seconds": 28.0159,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.0611,
+        "std_qber": 0.0032,
+        "mean_sifted_key": 2002.2,
+        "mean_key_gen_rate": 0.5006,
+        "mean_secure_key_rate": 0.3364,
+        "mean_secure_key_bits": 673.1,
+        "mean_runtime_seconds": 27.8386,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.1258,
+        "std_qber": 0.0074,
+        "mean_sifted_key": 1978.1,
+        "mean_key_gen_rate": 0.4945,
+        "mean_secure_key_rate": 0.0005,
+        "mean_secure_key_bits": 0.9,
+        "mean_runtime_seconds": 27.9918,
+        "secure_trials": "1/10"
+      },
+      {
+        "n_qubits": 4000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.2548,
+        "std_qber": 0.011,
+        "mean_sifted_key": 2010.8,
+        "mean_key_gen_rate": 0.5027,
+        "mean_secure_key_rate": 0.0,
+        "mean_secure_key_bits": 0.0,
+        "mean_runtime_seconds": 27.8127,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.0,
+        "trials": 10,
+        "mean_qber": 0.0,
+        "std_qber": 0.0,
+        "mean_sifted_key": 3987.2,
+        "mean_key_gen_rate": 0.4984,
+        "mean_secure_key_rate": 1.0,
+        "mean_secure_key_bits": 3987.2,
+        "mean_runtime_seconds": 55.563,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.25,
+        "trials": 10,
+        "mean_qber": 0.0636,
+        "std_qber": 0.0036,
+        "mean_sifted_key": 3996.1,
+        "mean_key_gen_rate": 0.4995,
+        "mean_secure_key_rate": 0.317,
+        "mean_secure_key_bits": 1265.8,
+        "mean_runtime_seconds": 55.824,
+        "secure_trials": "10/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 0.5,
+        "trials": 10,
+        "mean_qber": 0.1243,
+        "std_qber": 0.0053,
+        "mean_sifted_key": 3998.7,
+        "mean_key_gen_rate": 0.4998,
+        "mean_secure_key_rate": 0.0,
+        "mean_secure_key_bits": 0.0,
+        "mean_runtime_seconds": 55.7934,
+        "secure_trials": "0/10"
+      },
+      {
+        "n_qubits": 8000,
+        "eavesdrop_rate": 1.0,
+        "trials": 10,
+        "mean_qber": 0.2496,
+        "std_qber": 0.0057,
+        "mean_sifted_key": 3986.3,
+        "mean_key_gen_rate": 0.4983,
+        "mean_secure_key_rate": 0.0,
+        "mean_secure_key_bits": 0.0,
+        "mean_runtime_seconds": 56.1581,
+        "secure_trials": "0/10"
+      }
+    ]
+  },
+  "environment": {
+    "braket_sdk_version": "1.121.0",
+    "python_version": "3.12",
+    "region": "us-east-1"
+  },
+  "notes": "Updated with Shor-Preskill secure key rate R = 1 - 2H(QBER). SKR=1.0 at Eve=0%, SKR drops significantly at Eve=25% (~0.15-0.43), SKR=0.0 at Eve>=50%. Secure key bits reduce dramatically under eavesdropping. Results match theoretical predictions."
+}
