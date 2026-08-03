@@ -12,6 +12,13 @@ jobs:
       steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+          ref: latex
 
-    - name: Run a one-line script
-      run: echo "Test."
+    - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt install texlive-latex-base
+
+    - name: Change directory
+       run: |
+          cd "pdfs"
