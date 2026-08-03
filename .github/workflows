@@ -1,0 +1,24 @@
+name: Latex to PDF Compiler
+
+on:
+  push:
+    branches: [ "latex" ]
+    
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+      steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+          ref: latex
+
+    - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt install texlive-latex-base
+
+    - name: Change directory
+       run: |
+          cd "pdfs"
