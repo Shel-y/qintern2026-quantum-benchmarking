@@ -1,0 +1,17 @@
+name: Latex to PDF Compiler
+
+on:
+  push:
+    branches: [ "latex" ]
+    
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+      steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run a one-line script
+      run: echo "Test."
