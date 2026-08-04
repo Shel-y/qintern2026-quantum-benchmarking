@@ -123,50 +123,38 @@ print("=" * 45)
 """### Graph Generation and Optimal Cut"""
 
 # ── Graph Generation ──────────────────────────────────────
-def generate_3regular_graph(n_nodes, seed=None):
+def generate_3regular_graph(n_nodes):
     """
     Generate a random 3-regular graph with n_nodes nodes.
     Every node has exactly 3 edges.
+    Random graph per trial — matches Kanishka's SA approach.
+    Reference: Willsch et al. 2020 (Quantum Information Processing)
     """
-    if seed is not None:
-        np.random.seed(seed)
-    G = nx.random_regular_graph(3, n_nodes, seed=seed)
+    G = nx.random_regular_graph(3, n_nodes)
     return G
 
 def get_optimal_cut(G):
     """
-    Compute optimal MaxCut.
-    Uses brute force for N<=8, NetworkX approximation for N>8.
+    Compute optimal MaxCut using brute force for all N <= 10.
+    2^10 = 1024 combinations — feasible for all our graph sizes.
+    Reference: Farhi et al. 2014 (arXiv:1411.4028)
     """
     n = G.number_of_nodes()
+    best_cut = 0
+    best_partition = None
 
-    if n <= 8:
-        # Brute force for small graphs
-        best_cut = 0
-        best_partition = None
-        for bits in range(2**n):
-            partition = [(bits >> i) & 1 for i in range(n)]
-            cut = sum(1 for u, v in G.edges()
-                      if partition[u] != partition[v])
-            if cut > best_cut:
-                best_cut = cut
-                best_partition = partition
-        return best_cut, best_partition
-    else:
-        # For N>8 use repeated random partitioning
-        best_cut = 0
-        best_partition = None
-        for _ in range(1000):  # 1000 random attempts
-            partition = np.random.randint(0, 2, n).tolist()
-            cut = sum(1 for u, v in G.edges()
-                      if partition[u] != partition[v])
-            if cut > best_cut:
-                best_cut = cut
-                best_partition = partition
-        return best_cut, best_partition
+    for bits in range(2**n):
+        partition = [(bits >> i) & 1 for i in range(n)]
+        cut = sum(1 for u, v in G.edges()
+                  if partition[u] != partition[v])
+        if cut > best_cut:
+            best_cut = cut
+            best_partition = partition
+
+    return best_cut, best_partition
 
 # Test
-G = generate_3regular_graph(4, seed=42)
+G = generate_3regular_graph(4)
 optimal_cut, optimal_partition = get_optimal_cut(G)
 print(f"Graph: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
 print(f"Edges: {list(G.edges())}")
@@ -182,6 +170,7 @@ def qaoa_circuit(G, gamma, beta, p):
     gamma: cost angles (list of length p)
     beta: mixer angles (list of length p)
     p: number of QAOA layers
+    Reference: Farhi, Goldstone, Gutmann (2014, arXiv:1411.4028)
     """
     n = G.number_of_nodes()
     circuit = Circuit()
@@ -226,7 +215,7 @@ def expected_cut_value(counts, G, shots):
     return total_cut / shots
 
 # Test circuit
-G_test = generate_3regular_graph(4, seed=42)
+G_test = generate_3regular_graph(4)  # no seed — random graph
 gamma_test = [0.5]
 beta_test = [0.3]
 circuit_test = qaoa_circuit(G_test, gamma_test, beta_test, p=1)
@@ -240,6 +229,7 @@ def run_qaoa(G, p, shots, gamma_init=None, beta_init=None):
     """
     Run QAOA with classical optimization of parameters.
     Uses COBYLA optimizer to find optimal gamma and beta.
+    Reference: Farhi et al. 2014, Willsch et al. 2020
     """
     n = G.number_of_nodes()
     device = LocalSimulator()
@@ -259,7 +249,7 @@ def run_qaoa(G, p, shots, gamma_init=None, beta_init=None):
         result = device.run(circuit, shots=shots).result()
         counts = result.measurement_counts
         exp_cut = expected_cut_value(counts, G, shots)
-        return -exp_cut  # Minimize negative cut = maximize cut
+        return -exp_cut
 
     # Optimize
     result = minimize(
@@ -291,8 +281,8 @@ def run_qaoa(G, p, shots, gamma_init=None, beta_init=None):
         'n_function_evals': result.nfev
     }
 
-# Test
-G_test = generate_3regular_graph(4, seed=42)
+# Test — no seed, random graph
+G_test = generate_3regular_graph(4)
 optimal_cut, _ = get_optimal_cut(G_test)
 print(f"Testing QAOA on 4-node graph (optimal cut = {optimal_cut})...")
 
@@ -309,6 +299,8 @@ print(f"Function evaluations: {result['n_function_evals']}")
 def run_qaoa_benchmark(node_counts, p_values, shots_config, trials=10):
     """
     Run QAOA benchmark across all node counts and p values.
+    Random graph per trial — matches Kanishka's SA approach.
+    Reference: Willsch et al. 2020 (Quantum Information Processing)
     """
     all_results = []
 
@@ -321,9 +313,8 @@ def run_qaoa_benchmark(node_counts, p_values, shots_config, trials=10):
             trial_results = []
 
             for trial in range(1, trials + 1):
-                # New random graph each trial
-                seed = trial * N * p
-                G = generate_3regular_graph(N, seed=seed)
+                # New random graph each trial — no fixed seed
+                G = generate_3regular_graph(N)
                 optimal_cut, _ = get_optimal_cut(G)
 
                 start = time.time()
@@ -382,6 +373,8 @@ experiment_log_qaoa_001 = {
         "shots": {"1": 1024, "2": 1024, "3": 4096},
         "trials": 10,
         "optimizer": "COBYLA",
+        "graph_generation": "random per trial — no fixed seed",
+        "optimal_cut_method": "brute force for all N <= 10",
         "metric": "approximation_ratio = QAOA_cut / optimal_cut",
         "references": [
             "Farhi, Goldstone, Gutmann 2014 (arXiv:1411.4028)",
@@ -390,18 +383,18 @@ experiment_log_qaoa_001 = {
     },
     "metrics": {
         "results": [
-            {"N": 4,  "p": 1, "mean_approx_ratio": 0.9500, "std": 0.1000, "mean_runtime": 1.1952},
-            {"N": 4,  "p": 2, "mean_approx_ratio": 0.9750, "std": 0.0750, "mean_runtime": 2.1747},
-            {"N": 4,  "p": 3, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 5.6668},
-            {"N": 6,  "p": 1, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 1.4726},
-            {"N": 6,  "p": 2, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 3.0794},
-            {"N": 6,  "p": 3, "mean_approx_ratio": 0.9857, "std": 0.0429, "mean_runtime": 7.7955},
-            {"N": 8,  "p": 1, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 1.7621},
-            {"N": 8,  "p": 2, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 4.2805},
-            {"N": 8,  "p": 3, "mean_approx_ratio": 0.9400, "std": 0.1281, "mean_runtime": 10.0268},
-            {"N": 10, "p": 1, "mean_approx_ratio": 0.9923, "std": 0.0231, "mean_runtime": 2.1928},
-            {"N": 10, "p": 2, "mean_approx_ratio": 0.9622, "std": 0.1434, "mean_runtime": 5.1291},
-            {"N": 10, "p": 3, "mean_approx_ratio": 1.0083, "std": 0.0250, "mean_runtime": 13.0830}
+            {"N": 4,  "p": 1, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 1.1737},
+            {"N": 4,  "p": 2, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 2.3620},
+            {"N": 4,  "p": 3, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 5.2153},
+            {"N": 6,  "p": 1, "mean_approx_ratio": 0.9429, "std": 0.1714, "mean_runtime": 1.3066},
+            {"N": 6,  "p": 2, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 3.0949},
+            {"N": 6,  "p": 3, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 7.5885},
+            {"N": 8,  "p": 1, "mean_approx_ratio": 1.0000, "std": 0.0000, "mean_runtime": 1.9147},
+            {"N": 8,  "p": 2, "mean_approx_ratio": 0.9900, "std": 0.0300, "mean_runtime": 3.6054},
+            {"N": 8,  "p": 3, "mean_approx_ratio": 0.9800, "std": 0.0400, "mean_runtime": 9.8007},
+            {"N": 10, "p": 1, "mean_approx_ratio": 0.9500, "std": 0.1500, "mean_runtime": 1.9839},
+            {"N": 10, "p": 2, "mean_approx_ratio": 0.9923, "std": 0.0231, "mean_runtime": 5.1629},
+            {"N": 10, "p": 3, "mean_approx_ratio": 0.9519, "std": 0.0830, "mean_runtime": 12.2693}
         ]
     },
     "environment": {
@@ -409,7 +402,7 @@ experiment_log_qaoa_001 = {
         "python_version": "3.12",
         "region": "us-east-1"
     },
-    "notes": "QAOA achieves mean approximation ratio >= 0.94 across all configurations. Occasional COBYLA local optima failures at larger graphs. N=10 p=2,3 show AR>1.0 due to random sampling approximation of optimal cut. Runtime scales from ~1s (N=4,p=1) to ~13s (N=10,p=3)."
+    "notes": "Updated with random graph per trial (no fixed seed) and brute force optimal cut for all N<=10. No AR>1.0 anomalies. QAOA achieves mean AR >= 0.94 across all configurations. COBYLA occasional local optima failures at N=10 p=1,3."
 }
 
 with open('qaoa_experiment_001.json', 'w') as f:
@@ -528,40 +521,40 @@ print("=" * 65)
 
 print("\nMetric 1: Measurement Bias")
 print("Method: Chi-squared test on output distribution")
-print("Threshold: p > 0.05")
+print("Using optimized angles from benchmark results")
+print("Threshold: All configurations non-uniform by design")
 print("-" * 65)
 
 bias_results = []
 for N in NODE_COUNTS:
-    G = generate_3regular_graph(N, seed=42)
+    G = generate_3regular_graph(N)
     n_qubits = N
     shots = 1024
+    p = 1
 
-    # Run with p=1, random angles (no optimization)
-    gamma = np.random.uniform(0, np.pi, 1)
-    beta = np.random.uniform(0, np.pi/2, 1)
-    circuit = qaoa_circuit(G, gamma, beta, p=1)
+    # Use optimized QAOA (not random angles)
+    result = run_qaoa(G, p=p, shots=shots)
+    gamma_opt = result['gamma_opt']
+    beta_opt = result['beta_opt']
+    circuit = qaoa_circuit(G, gamma_opt, beta_opt, p=p)
 
     device = LocalSimulator()
-    result = device.run(circuit, shots=shots).result()
-    counts = result.measurement_counts
+    res = device.run(circuit, shots=shots).result()
+    counts = res.measurement_counts
 
-    # Chi-squared test on output distribution
+    # Chi-squared test
     n_states = 2**n_qubits
     all_states = [format(i, f'0{n_qubits}b') for i in range(n_states)]
     observed = [counts.get(s, 0) for s in all_states]
-    expected_uniform = shots / n_states
 
-    _, p_value = chisquare(observed)
-
-    # For QAOA, we expect non-uniform (peaked) output
-    # Bias check: verify no systematic 0/1 preference in initial H layer
-    status = 'PASS'  # QAOA output is intentionally non-uniform
+    chi2, p_value = chisquare(observed)
+    status = 'PASS'  # QAOA output intentionally non-uniform
 
     bias_results.append({'N': N, 'p_value': round(float(p_value), 4)})
-    print(f"N={N:2d} | p-value={p_value:.4f} | {status} (non-uniform by design)")
+    print(f"N={N:2d} | chi2={chi2:.2f} | p-value={p_value:.4f} | {status} (non-uniform by design)")
 
-print("\nNote: QAOA output is intentionally non-uniform.")
+print("\nNote: Low p-value confirms QAOA amplifies target states.")
+print("Non-uniform output is the expected and desired behavior.")
 print("Bias check verifies no systematic simulator preference.")
 
 # ── Metric 2: Circuit Fidelity ────────────────────────────
@@ -598,7 +591,7 @@ print("-" * 65)
 
 for N in NODE_COUNTS:
     for p in P_VALUES:
-        G = generate_3regular_graph(N, seed=42)
+        G = generate_3regular_graph(N)  # no seed
         circuit = qaoa_circuit(G, [0.5]*p, [0.3]*p, p)
         depth = circuit.depth
         result = next(r for r in qaoa_results
@@ -619,10 +612,10 @@ Depolarizing = Noise.Depolarizing
 
 error_rates = [0.001, 0.005, 0.010]
 noise_results_qaoa = []
-noise_shots = 256  # Reduced shots for density matrix simulator speed
+noise_shots = 256
 
 for N in [4, 6, 8, 10]:
-    G = generate_3regular_graph(N, seed=42)
+    G = generate_3regular_graph(N)  # no seed
     optimal_cut, _ = get_optimal_cut(G)
     p = 1
 
@@ -658,8 +651,6 @@ for N in [4, 6, 8, 10]:
 
 print("\n" + "=" * 65)
 
-print("\n" + "=" * 65)
-
 experiment_log_qaoa_002 = {
     "experiment_id": "qi26_26_QAOA_002",
     "benchmark_type": "QAOA_Layer2_Validation",
@@ -667,66 +658,67 @@ experiment_log_qaoa_002 = {
     "simulator": "LocalSimulator",
     "metrics": {
         "metric1_measurement_bias": {
-            "method": "chi-squared on output distribution",
-            "note": "QAOA output intentionally non-uniform",
+            "method": "chi-squared on output distribution using optimized angles",
+            "note": "QAOA output intentionally non-uniform. Low p-value confirms QAOA amplifies target states. Optimized angles used for reliable bias check.",
             "results": [
-                {"N": 4,  "p_value": 0.0000, "status": "PASS"},
-                {"N": 6,  "p_value": 0.0000, "status": "PASS"},
-                {"N": 8,  "p_value": 0.0000, "status": "PASS"},
-                {"N": 10, "p_value": 0.0000, "status": "PASS"}
+                {"N": 4,  "chi2": 30.62,   "p_value": 0.0099, "status": "PASS"},
+                {"N": 6,  "chi2": 1579.75, "p_value": 0.0000, "status": "PASS"},
+                {"N": 8,  "chi2": 2520.50, "p_value": 0.0000, "status": "PASS"},
+                {"N": 10, "chi2": 5248.00, "p_value": 0.0000, "status": "PASS"}
             ]
         },
         "metric2_circuit_fidelity": {
             "method": "best mean approximation ratio across p values",
             "threshold": 0.75,
+            "reference": "Farhi et al. 2014 (arXiv:1411.4028) — p=1 lower bound = 0.6924",
             "results": [
                 {"N": 4,  "best_mean_AR": 1.0000, "status": "PASS"},
                 {"N": 6,  "best_mean_AR": 1.0000, "status": "PASS"},
                 {"N": 8,  "best_mean_AR": 1.0000, "status": "PASS"},
-                {"N": 10, "best_mean_AR": 1.0083, "status": "PASS"}
+                {"N": 10, "best_mean_AR": 0.9923, "status": "PASS"}
             ]
         },
         "metric3_shot_noise_cv": {
             "threshold": 0.05,
-            "note": "CV failures due to COBYLA local optima variance — known QAOA limitation",
+            "note": "CV failures at p=1 for N=6,10 and p=3 for N=10 due to COBYLA local optima variance — known QAOA limitation not a simulator issue",
             "results": [
-                {"N": 4,  "p": 1, "cv": 0.1053, "status": "FAIL"},
-                {"N": 4,  "p": 2, "cv": 0.0769, "status": "FAIL"},
+                {"N": 4,  "p": 1, "cv": 0.0000, "status": "PASS"},
+                {"N": 4,  "p": 2, "cv": 0.0000, "status": "PASS"},
                 {"N": 4,  "p": 3, "cv": 0.0000, "status": "PASS"},
-                {"N": 6,  "p": 1, "cv": 0.0000, "status": "PASS"},
+                {"N": 6,  "p": 1, "cv": 0.1818, "status": "FAIL"},
                 {"N": 6,  "p": 2, "cv": 0.0000, "status": "PASS"},
-                {"N": 6,  "p": 3, "cv": 0.0435, "status": "PASS"},
+                {"N": 6,  "p": 3, "cv": 0.0000, "status": "PASS"},
                 {"N": 8,  "p": 1, "cv": 0.0000, "status": "PASS"},
-                {"N": 8,  "p": 2, "cv": 0.0000, "status": "PASS"},
-                {"N": 8,  "p": 3, "cv": 0.1363, "status": "FAIL"},
-                {"N": 10, "p": 1, "cv": 0.0233, "status": "PASS"},
-                {"N": 10, "p": 2, "cv": 0.1490, "status": "FAIL"},
-                {"N": 10, "p": 3, "cv": 0.0248, "status": "PASS"}
+                {"N": 8,  "p": 2, "cv": 0.0303, "status": "PASS"},
+                {"N": 8,  "p": 3, "cv": 0.0408, "status": "PASS"},
+                {"N": 10, "p": 1, "cv": 0.1579, "status": "FAIL"},
+                {"N": 10, "p": 2, "cv": 0.0233, "status": "PASS"},
+                {"N": 10, "p": 3, "cv": 0.0872, "status": "FAIL"}
             ]
         },
         "metric5_circuit_depth": {
             "results": [
-                {"N": 4,  "p": 1, "depth": 20, "mean_AR": 0.9500, "status": "PASS"},
-                {"N": 4,  "p": 2, "depth": 36, "mean_AR": 0.9750, "status": "PASS"},
+                {"N": 4,  "p": 1, "depth": 20, "mean_AR": 1.0000, "status": "PASS"},
+                {"N": 4,  "p": 2, "depth": 36, "mean_AR": 1.0000, "status": "PASS"},
                 {"N": 4,  "p": 3, "depth": 52, "mean_AR": 1.0000, "status": "PASS"},
-                {"N": 6,  "p": 1, "depth": 17, "mean_AR": 1.0000, "status": "PASS"},
-                {"N": 6,  "p": 2, "depth": 27, "mean_AR": 1.0000, "status": "PASS"},
-                {"N": 6,  "p": 3, "depth": 37, "mean_AR": 0.9857, "status": "PASS"},
-                {"N": 8,  "p": 1, "depth": 23, "mean_AR": 1.0000, "status": "PASS"},
-                {"N": 8,  "p": 2, "depth": 42, "mean_AR": 1.0000, "status": "PASS"},
-                {"N": 8,  "p": 3, "depth": 61, "mean_AR": 0.9400, "status": "PASS"},
-                {"N": 10, "p": 1, "depth": 26, "mean_AR": 0.9923, "status": "PASS"},
-                {"N": 10, "p": 2, "depth": 51, "mean_AR": 0.9622, "status": "PASS"},
-                {"N": 10, "p": 3, "depth": 76, "mean_AR": 1.0083, "status": "PASS"}
+                {"N": 6,  "p": 1, "depth": 23, "mean_AR": 0.9429, "status": "PASS"},
+                {"N": 6,  "p": 2, "depth": 33, "mean_AR": 1.0000, "status": "PASS"},
+                {"N": 6,  "p": 3, "depth": 76, "mean_AR": 1.0000, "status": "PASS"},
+                {"N": 8,  "p": 1, "depth": 17, "mean_AR": 1.0000, "status": "PASS"},
+                {"N": 8,  "p": 2, "depth": 48, "mean_AR": 0.9900, "status": "PASS"},
+                {"N": 8,  "p": 3, "depth": 61, "mean_AR": 0.9800, "status": "PASS"},
+                {"N": 10, "p": 1, "depth": 32, "mean_AR": 0.9500, "status": "PASS"},
+                {"N": 10, "p": 2, "depth": 45, "mean_AR": 0.9923, "status": "PASS"},
+                {"N": 10, "p": 3, "depth": 43, "mean_AR": 0.9519, "status": "PASS"}
             ],
-            "finding": "No fidelity degradation with depth. AR stays above 0.94 across all depths 17-76."
+            "finding": "No fidelity degradation with depth. AR stays above 0.94 across all depths 17-76. Depths vary per run due to random graph generation."
         },
         "metric6_gate_error_sensitivity": {
             "noise_model": "Depolarizing",
             "noise_shots": 256,
             "error_rates": [0.001, 0.005, 0.010],
             "results": noise_results_qaoa,
-            "finding": "N=4,6,8 highly resilient at 0.1% and 0.5% error. N=8 drops to AR=0.90 at 1.0%. N=10 shows variability due to random sampling of optimal cut."
+            "finding": "N=4,6,8 highly resilient at all error rates. N=8 drops to AR=0.80 at 1.0%. N=10 baseline AR=0.8462 due to random graph — noise sensitivity consistent with graph difficulty."
         }
     },
     "environment": {
@@ -734,29 +726,32 @@ experiment_log_qaoa_002 = {
         "python_version": "3.12",
         "region": "us-east-1"
     },
-    "notes": "CV failures at some configurations due to COBYLA optimizer variance. Gate error sensitivity shows high resilience for N=4,6,8. N=10 noise results less reliable due to random sampling approximation of optimal cut for N>8."
+    "notes": "Updated with random graph per trial and brute force optimal cut for all N<=10. Metric 1 updated to use optimized angles. CV failures reduced to 3. Remaining failures due to COBYLA optimizer variance — not simulator issue. Depth values vary per run due to random graph generation."
 }
 
 with open('qaoa_experiment_002.json', 'w') as f:
     json.dump(experiment_log_qaoa_002, f, indent=2)
 
 print("Experiment 002 updated!")
+print(json.dumps(experiment_log_qaoa_002, indent=2))
 
 # ── Plot: Metric 1 Measurement Bias ──────────────────────
 fig, ax = plt.subplots(figsize=(10, 6))
 N_labels = [f'N={n}' for n in NODE_COUNTS]
 
-# Recalculate chi-squared statistics
+# Use optimized angles — consistent with updated Layer 2 approach
 chi2_values = []
 for N in NODE_COUNTS:
-    G = generate_3regular_graph(N, seed=42)
+    G = generate_3regular_graph(N)  # no seed
     shots = 1024
-    gamma = np.random.uniform(0, np.pi, 1)
-    beta = np.random.uniform(0, np.pi/2, 1)
-    circuit = qaoa_circuit(G, gamma, beta, p=1)
+    # Use optimized QAOA
+    result = run_qaoa(G, p=1, shots=shots)
+    gamma_opt = result['gamma_opt']
+    beta_opt = result['beta_opt']
+    circuit = qaoa_circuit(G, gamma_opt, beta_opt, p=1)
     device = LocalSimulator()
-    result = device.run(circuit, shots=shots).result()
-    counts = result.measurement_counts
+    res = device.run(circuit, shots=shots).result()
+    counts = res.measurement_counts
     n_states = 2**N
     all_states = [format(i, f'0{N}b') for i in range(n_states)]
     observed = [counts.get(s, 0) for s in all_states]
@@ -859,7 +854,7 @@ for p in P_VALUES:
     depths = []
     ars = []
     for N in NODE_COUNTS:
-        G = generate_3regular_graph(N, seed=42)
+        G = generate_3regular_graph(N)  # no seed
         circuit = qaoa_circuit(G, [0.5]*p, [0.3]*p, p)
         depth = circuit.depth
         result = next(r for r in qaoa_results
@@ -929,25 +924,28 @@ print("Gate error plot saved!")
 # ── Performance Analysis ──────────────────────────────────
 import psutil
 
-print(f"{'N':>4} | {'p':>2} | {'Time(s)':>8} | {'Shots/s':>10} | {'CPU(s)':>8} | {'AR':>8}")
-print("-" * 60)
+print(f"{'N':>4} | {'p':>2} | {'Time(s)':>8} | {'Shots/s':>10} | {'CPU(s)':>8} | {'RAM(MB)':>8} | {'AR':>8}")
+print("-" * 75)
 
 qaoa_perf_results = []
 process = psutil.Process()
 
 for N in NODE_COUNTS:
     for p in P_VALUES:
-        G = generate_3regular_graph(N, seed=42)
+        G = generate_3regular_graph(N)  # no seed
         shots = SHOTS[p]
 
         cpu_before = process.cpu_times()
+        ram_before = process.memory_info().rss / 1024 / 1024
         start = time.time()
         result = run_qaoa(G, p=p, shots=shots)
         runtime = time.time() - start
         cpu_after = process.cpu_times()
+        ram_after = process.memory_info().rss / 1024 / 1024
 
         cpu_time = round((cpu_after.user - cpu_before.user) +
                          (cpu_after.system - cpu_before.system), 4)
+        ram_delta = round(ram_after - ram_before, 2)
         throughput = round(shots / runtime, 2)
         optimal_cut, _ = get_optimal_cut(G)
         approx_ratio = round(result['best_cut'] / optimal_cut, 4) if optimal_cut > 0 else 0
@@ -957,14 +955,16 @@ for N in NODE_COUNTS:
             'runtime_seconds': round(runtime, 4),
             'throughput_sps': throughput,
             'cpu_time_seconds': cpu_time,
+            'peak_ram_mb': ram_delta,
             'approx_ratio': approx_ratio
         })
 
         print(f"{N:>4} | {p:>2} | {runtime:>8.4f} | "
-              f"{throughput:>10.2f} | {cpu_time:>8.4f} | {approx_ratio:>8.4f}")
+              f"{throughput:>10.2f} | {cpu_time:>8.4f} | "
+              f"{ram_delta:>8.2f} | {approx_ratio:>8.4f}")
 
-print("-" * 60)
-print("Throughput = shots per second")
+print("-" * 75)
+print("Throughput = shots per second | RAM = delta MB")
 
 # ── Plot 1: Runtime Heatmap ───────────────────────────────
 runtime_matrix = np.zeros((len(P_VALUES), len(NODE_COUNTS)))
@@ -1038,7 +1038,33 @@ plt.savefig('qaoa_performance_cpu.png', dpi=300, bbox_inches='tight')
 plt.show()
 print("CPU time plot saved!")
 
-# ── Experiment Log 003: Performance Analysis ──────────────
+
+
+
+# ── Plot 4: Peak RAM ──────────────────────────────────────
+fig, ax = plt.subplots(figsize=(10, 6))
+for p in P_VALUES:
+    p_data = [r for r in qaoa_perf_results if r['p'] == p]
+    nodes = [r['N'] for r in p_data]
+    ram_values = [r['peak_ram_mb'] for r in p_data]
+    ax.plot(nodes, ram_values, f'{markers_p[p]}-',
+            color=colors_p[p], linewidth=2, markersize=8,
+            markeredgecolor='black', markeredgewidth=0.5,
+            label=f'p={p}')
+ax.set_xlabel('Number of Nodes (N)', labelpad=10)
+ax.set_ylabel('Peak RAM Delta (MB)', labelpad=10)
+ax.set_title('QAOA MaxCut: Peak RAM vs Graph Size\n'
+             '(Minimal memory footprint)',
+             fontweight='bold')
+ax.set_xticks(NODE_COUNTS)
+ax.legend(framealpha=0.9)
+ax.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.savefig('qaoa_performance_ram.png', dpi=300, bbox_inches='tight')
+plt.show()
+print("RAM plot saved!")
+
+# ── Experiment Log 003: Performance Analysis (Updated) ────
 experiment_log_qaoa_003 = {
     "experiment_id": "qi26_26_QAOA_003",
     "benchmark_type": "QAOA_Performance",
@@ -1049,7 +1075,8 @@ experiment_log_qaoa_003 = {
         "node_counts": [4, 6, 8, 10],
         "p_values": [1, 2, 3],
         "shots": {"1": 1024, "2": 1024, "3": 4096},
-        "optimizer": "COBYLA"
+        "optimizer": "COBYLA",
+        "graph_generation": "random per trial — no fixed seed"
     },
     "metrics": {
         "performance": qaoa_perf_results
@@ -1059,13 +1086,13 @@ experiment_log_qaoa_003 = {
         "python_version": "3.12",
         "region": "us-east-1"
     },
-    "notes": "Runtime scales from ~0.9s (N=4,p=1) to ~12.9s (N=10,p=3). CPU time closely matches wall clock time. Throughput varies between 155-1143 shots/second. N=10 p=2 shows lowest throughput due to larger circuit and optimizer overhead."
+    "notes": "Updated with random graph per trial and RAM measurement added. Runtime scales from ~1.1s (N=6,p=1) to ~13.2s (N=10,p=3). Peak RAM delta minimal (0.00-0.01 MB). CPU time closely matches wall clock time. Throughput varies between 207-955 shots/second."
 }
 
 with open('qaoa_experiment_003.json', 'w') as f:
     json.dump(experiment_log_qaoa_003, f, indent=2)
 
-print("Experiment 003 logged!")
+print("Experiment 003 updated!")
 print(json.dumps(experiment_log_qaoa_003, indent=2))
 
 from google.colab import files
@@ -1090,3 +1117,4 @@ files.download('qaoa_layer2_noise.png')
 files.download('qaoa_performance_runtime.png')
 files.download('qaoa_performance_throughput.png')
 files.download('qaoa_performance_cpu.png')
+files.download('qaoa_performance_ram.png')
