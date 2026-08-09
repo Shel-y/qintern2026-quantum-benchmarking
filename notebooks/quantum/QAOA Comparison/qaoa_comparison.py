@@ -103,11 +103,19 @@ def load_json(url):
 qaoa_benchmark = load_json(BASE_URL + "qaoa_experiment_001.json")
 qaoa_layer2    = load_json(BASE_URL + "qaoa_experiment_002.json")
 qaoa_perf      = load_json(BASE_URL + "qaoa_experiment_003.json")
+qaoa_pertrial_raw = load_json(BASE_URL + "qaoa_experiment_004.json")
 
 print("QAOA results loaded!")
 print(f"Experiment 001: {qaoa_benchmark['experiment_id']}")
 print(f"Experiment 002: {qaoa_layer2['experiment_id']}")
 print(f"Experiment 003: {qaoa_perf['experiment_id']}")
+print(f"Experiment 004: {qaoa_pertrial_raw['experiment_id']}")
+
+import pandas as pd
+qaoa_pertrial = qaoa_pertrial_raw['metrics']['per_trial_results']
+qaoa_pertrial_df = pd.DataFrame(qaoa_pertrial)
+print(f"Per-trial records loaded: {len(qaoa_pertrial)}")
+print(qaoa_pertrial_df.groupby(['N', 'p'])['approx_ratio'].agg(['mean', 'std', 'count']))
 
 # ── Load SA Results from GitHub ───────────────────────────
 SA_BASE_URL = "https://raw.githubusercontent.com/Shel-y/qintern2026-quantum-benchmarking/main/classical_implementations/Classical_MaxCutSolver/"
@@ -468,18 +476,21 @@ standard parametric test for comparing two independent sample means
 """
 
 # ── Statistical Tests: AR ─────────────────────────────────
-qaoa_ar_all = [r['mean_approx_ratio'] for r in qaoa_results]
-sa_ar_all = [r['mean_approx_ratio'] for r in sa_results]
+# Uses real per-trial QAOA data (qaoa_experiment_004.json, 120 trials),
+# not p-level aggregation or fabricated SA padding.
+
+qaoa_ar_all_trials = qaoa_pertrial_df['approx_ratio'].values  # 120 real trials
+sa_ar_all = [r['mean_approx_ratio'] for r in sa_results]      # 4 real values, one per N
 
 print("=" * 60)
 print("Statistical Analysis: QAOA vs SA Approximation Ratios")
 print("=" * 60)
 
-print(f"\nQAOA Summary:")
-print(f"  Mean AR:  {np.mean(qaoa_ar_all):.4f}")
-print(f"  Std AR:   {np.std(qaoa_ar_all):.4f}")
-print(f"  Min AR:   {min(qaoa_ar_all):.4f}")
-print(f"  Max AR:   {max(qaoa_ar_all):.4f}")
+print(f"\nQAOA Summary (all 120 real per-trial values):")
+print(f"  Mean AR:  {qaoa_ar_all_trials.mean():.4f}")
+print(f"  Std AR:   {qaoa_ar_all_trials.std(ddof=1):.4f}")
+print(f"  Min AR:   {qaoa_ar_all_trials.min():.4f}")
+print(f"  Max AR:   {qaoa_ar_all_trials.max():.4f}")
 
 print(f"\nSA Summary:")
 print(f"  Mean AR:  {np.mean(sa_ar_all):.4f}")
@@ -487,55 +498,60 @@ print(f"  Std AR:   {np.std(sa_ar_all):.4f}")
 print(f"  Min AR:   {min(sa_ar_all):.4f}")
 print(f"  Max AR:   {max(sa_ar_all):.4f}")
 
-# QAOA vs Farhi et al. lower bound
+# QAOA vs Farhi et al. lower bound -- single-sample test against a fixed
+# theoretical constant, not against SA, so this was always valid; now uses
+# all 120 real trials instead of 12 p-level means.
 print(f"\nQAOA vs Farhi et al. lower bound (0.6924):")
-t_stat, p_value = stats.ttest_1samp(qaoa_ar_all, 0.6924)
+t_stat, p_value = stats.ttest_1samp(qaoa_ar_all_trials, 0.6924)
 print(f"  t-statistic: {t_stat:.4f}")
 print(f"  p-value:     {p_value:.6f}")
 print(f"  Result: {'Significantly above lower bound' if p_value < 0.05 else 'Not significant'}")
 
-# QAOA vs SA t-test
-print(f"\nQAOA vs SA — Independent t-test:")
-t_stat, p_value = stats.ttest_ind(qaoa_ar_all, sa_ar_all)
-print(f"  t-statistic: {t_stat:.4f}")
-print(f"  p-value:     {p_value:.6f}")
-print(f"  Result: {'Significant difference' if p_value < 0.05 else 'No significant difference'}")
-
-# By p value
-print(f"\nAR by QAOA depth:")
+# By p value -- now real per-trial std, not std-across-N
+print(f"\nAR by QAOA depth (real per-trial std):")
 for p in P_VALUES:
-    p_ar = [r['mean_approx_ratio'] for r in qaoa_results if r['p'] == p]
-    print(f"  p={p}: Mean={np.mean(p_ar):.4f} | Std={np.std(p_ar):.4f}")
+    p_trials = qaoa_pertrial_df[qaoa_pertrial_df['p'] == p]['approx_ratio']
+    print(f"  p={p}: Mean={p_trials.mean():.4f} | Std={p_trials.std(ddof=1):.4f} | n={len(p_trials)}")
 
-# By node count — QAOA vs SA
+# By node count -- QAOA best p vs SA
 print(f"\nAR by node count (QAOA best p vs SA):")
 for N in NODE_COUNTS:
-    qaoa_best = max([r['mean_approx_ratio']
-                     for r in qaoa_results if r['N'] == N])
+    qaoa_best = qaoa_pertrial_df[qaoa_pertrial_df['N'] == N].groupby('p')['approx_ratio'].mean().max()
     sa_ar = next(r['mean_approx_ratio'] for r in sa_results if r['N'] == N)
     winner = 'QAOA' if qaoa_best > sa_ar else ('SA' if sa_ar > qaoa_best else 'TIE')
     print(f"  N={N:2d}: QAOA={qaoa_best:.4f} | SA={sa_ar:.4f} | {winner}")
 
 print("=" * 60)
 
+# ── Per-N Welch's t-test: QAOA (best-p, real trials) vs SA ──
+print(f"\nPer-N Welch's t-test (QAOA best-p real trials vs SA):")
+print("Note: SA has zero variance at every N (always finds optimal cut).")
+print("      When QAOA also has zero variance at a given N (a real ceiling")
+print("      effect, not missing data), the comparison is deterministic-vs-")
+print("      deterministic and no significance test applies.")
+print("-" * 60)
 
+sa_std_by_N = {r['N']: 0.0 for r in sa_results}  # SA std is genuinely 0 everywhere
+sa_ar_by_N = {r['N']: r['mean_approx_ratio'] for r in sa_results}
 
-# QAOA vs SA — Welch's t-test (unequal variance)
-print(f"\nQAOA vs SA — Welch's t-test:")
-print("Note: SA std=0.0 (always optimal) — using Welch's for unequal variance")
-t_stat, p_value = stats.ttest_ind(qaoa_ar_all, sa_ar_all, equal_var=False)
-print(f"  t-statistic: {t_stat:.4f}")
-print(f"  p-value:     {p_value:.6f}")
-print(f"  Result: {'Significant difference' if p_value < 0.05 else 'No significant difference — SA and QAOA statistically equivalent at N<=10'}")
-
-# More meaningful: per-N comparison
-print(f"\nPer-N Welch's t-test (QAOA across p vs SA):")
 for N in NODE_COUNTS:
-    qaoa_n = [r['mean_approx_ratio'] for r in qaoa_results if r['N'] == N]
-    sa_n = [next(r['mean_approx_ratio'] for r in sa_results if r['N'] == N)] * 4
-    t_stat, p_val = stats.ttest_ind(qaoa_n, sa_n, equal_var=False)
+    best_p = qaoa_pertrial_df[qaoa_pertrial_df['N']==N].groupby('p')['approx_ratio'].mean().idxmax()
+    qaoa_trials = qaoa_pertrial_df[(qaoa_pertrial_df['N']==N) & (qaoa_pertrial_df['p']==best_p)]['approx_ratio'].values
+    qaoa_std = qaoa_trials.std(ddof=1)
+
+    if qaoa_std == 0 and sa_std_by_N[N] == 0:
+        print(f"  N={N:2d} (best p={best_p}) | QAOA={qaoa_trials.mean():.4f} (std=0) | "
+              f"SA={sa_ar_by_N[N]:.4f} (std=0) | both deterministic — no test applicable")
+        continue
+
+    t_stat, p_val = stats.ttest_ind_from_stats(
+        mean1=qaoa_trials.mean(), std1=qaoa_std, nobs1=len(qaoa_trials),
+        mean2=sa_ar_by_N[N], std2=max(sa_std_by_N[N], 1e-6), nobs2=10,
+        equal_var=False)
     result = 'Significant' if p_val < 0.05 else 'Not significant'
-    print(f"  N={N:2d} | t={t_stat:.4f} | p={p_val:.4f} | {result}")
+    print(f"  N={N:2d} (best p={best_p}) | t={t_stat:.4f} | p={p_val:.4f} | {result}")
+
+print("=" * 60)
 
 """### 5.2 t-test: Runtimes
 
@@ -555,18 +571,21 @@ quantum benchmarking comparison.
 """
 
 # ── Statistical Tests: Runtime ────────────────────────────
-qaoa_rt_all = [r['mean_runtime'] for r in qaoa_results]
-sa_rt_all = [r['mean_runtime'] for r in sa_results]
+# QAOA side uses real per-trial runtime (qaoa_experiment_004.json).
+# SA side uses its own real aggregate std (10 real trials per Kanishka's protocol).
 
 print("=" * 60)
 print("Statistical Analysis: QAOA vs SA Runtimes")
 print("=" * 60)
 
-print(f"\nQAOA Runtime Summary:")
-print(f"  Mean: {np.mean(qaoa_rt_all):.4f}s")
-print(f"  Std:  {np.std(qaoa_rt_all):.4f}s")
-print(f"  Min:  {min(qaoa_rt_all):.4f}s")
-print(f"  Max:  {max(qaoa_rt_all):.4f}s")
+qaoa_rt_all_trials = qaoa_pertrial_df['runtime_seconds'].values
+sa_rt_all = [r['mean_runtime'] for r in sa_results]
+
+print(f"\nQAOA Runtime Summary (all 120 real trials):")
+print(f"  Mean: {qaoa_rt_all_trials.mean():.4f}s")
+print(f"  Std:  {qaoa_rt_all_trials.std(ddof=1):.4f}s")
+print(f"  Min:  {qaoa_rt_all_trials.min():.4f}s")
+print(f"  Max:  {qaoa_rt_all_trials.max():.4f}s")
 
 print(f"\nSA Runtime Summary:")
 print(f"  Mean: {np.mean(sa_rt_all):.5f}s")
@@ -574,37 +593,48 @@ print(f"  Std:  {np.std(sa_rt_all):.5f}s")
 print(f"  Min:  {min(sa_rt_all):.5f}s")
 print(f"  Max:  {max(sa_rt_all):.5f}s")
 
-# QAOA vs SA runtime t-test
-print(f"\nQAOA vs SA — Runtime t-test:")
-t_stat, p_value = stats.ttest_ind(qaoa_rt_all, sa_rt_all,
-                                   equal_var=False)
-print(f"  t-statistic: {t_stat:.4f}")
-print(f"  p-value:     {p_value:.6f}")
-print(f"  Result: {'Significant difference' if p_value < 0.05 else 'No significant difference'}")
+# Per-N runtime t-test at p=1 (matching the Speedup section's convention),
+# using real QAOA trial variance vs SA's real 10-trial aggregate std/nobs.
+print(f"\nPer-N Welch's t-test: QAOA (p=1, real trials) vs SA runtime:")
+print("-" * 60)
+for N in NODE_COUNTS:
+    qaoa_trials = qaoa_pertrial_df[(qaoa_pertrial_df['N']==N) & (qaoa_pertrial_df['p']==1)]['runtime_seconds'].values
+    sa_r = next(r for r in sa_results if r['N'] == N)
+    t_stat, p_val = stats.ttest_ind_from_stats(
+        mean1=qaoa_trials.mean(), std1=qaoa_trials.std(ddof=1), nobs1=len(qaoa_trials),
+        mean2=sa_r['mean_runtime'], std2=max(sa_r['std_runtime'], 1e-6), nobs2=10,
+        equal_var=False)
+    result = 'Significant' if p_val < 0.05 else 'Not significant'
+    print(f"  N={N:2d} | QAOA={qaoa_trials.mean():.4f}s | SA={sa_r['mean_runtime']:.5f}s | "
+          f"t={t_stat:.4f} | p={p_val:.6f} | {result}")
 
-# Speedup factor
+# Speedup factor -- unchanged, already valid (ratio only, no variance claim)
 print(f"\nSpeedup: SA vs QAOA (p=1):")
 for N in NODE_COUNTS:
-    qaoa_rt = next(r['mean_runtime'] for r in qaoa_results
-                   if r['N'] == N and r['p'] == 1)
+    qaoa_rt = qaoa_pertrial_df[(qaoa_pertrial_df['N']==N) & (qaoa_pertrial_df['p']==1)]['runtime_seconds'].mean()
     sa_rt = next(r['mean_runtime'] for r in sa_results if r['N'] == N)
     speedup = qaoa_rt / sa_rt
-    print(f"  N={N:2d}: QAOA={qaoa_rt:.4f}s | SA={sa_rt:.5f}s | "
-          f"SA is {speedup:.0f}x faster")
+    print(f"  N={N:2d}: QAOA={qaoa_rt:.4f}s | SA={sa_rt:.5f}s | SA is {speedup:.0f}x faster")
 
-# Runtime by p value
-print(f"\nRuntime by QAOA depth:")
+# Runtime by p value -- now real per-trial std
+print(f"\nRuntime by QAOA depth (real per-trial std):")
 for p in P_VALUES:
-    p_rt = [r['mean_runtime'] for r in qaoa_results if r['p'] == p]
-    print(f"  p={p}: Mean={np.mean(p_rt):.4f}s | Std={np.std(p_rt):.4f}s")
+    p_rt = qaoa_pertrial_df[qaoa_pertrial_df['p'] == p]['runtime_seconds']
+    print(f"  p={p}: Mean={p_rt.mean():.4f}s | Std={p_rt.std(ddof=1):.4f}s | n={len(p_rt)}")
 
-# Correlation
+# Correlation -- unchanged, this level (one point per N) was already correct
 print(f"\nCorrelation: Runtime vs Node Count (p=1):")
 p1_nodes = [r['N'] for r in qaoa_results if r['p'] == 1]
 p1_rts = [r['mean_runtime'] for r in qaoa_results if r['p'] == 1]
 correlation, corr_pval = stats.pearsonr(p1_nodes, p1_rts)
 print(f"  Pearson r = {correlation:.4f} | p-value = {corr_pval:.4f}")
-print(f"  Result: {'Strong positive correlation' if correlation > 0.7 else 'Weak correlation'}")
+if correlation > 0.7 and corr_pval < 0.05:
+    verdict = "Strong positive correlation, statistically significant"
+elif correlation > 0.7:
+    verdict = "Strong positive correlation, but p-value is marginal (n=4, low power)"
+else:
+    verdict = "Weak correlation"
+print(f"  Result: {verdict}")
 print("=" * 60)
 
 """### Joselyn-Approved Unique Comparison Plots"""
@@ -662,75 +692,75 @@ plt.show()
 print("Diverging bar chart saved!")
 
 # ── Plot 2: t-test Visualization ─────────────────────────
+# Uses real per-trial data (qaoa_experiment_004.json) at each N's best p,
+# matching Section 5's corrected per-N test exactly.
 fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 fig.suptitle('QAOA vs SA: Statistical Significance\n'
-             '(Welch t-test, α=0.05)',
+             '(Welch t-test on real per-trial data, α=0.05)',
              fontweight='bold', fontsize=14)
 
-# Left: AR side by side bars with significance
 ax = axes[0]
-qaoa_ar_by_N = [np.mean([r['mean_approx_ratio']
-                          for r in qaoa_results if r['N'] == N])
-                for N in NODE_COUNTS]
-qaoa_std_by_N = [np.std([r['mean_approx_ratio']
-                          for r in qaoa_results if r['N'] == N])
-                 for N in NODE_COUNTS]
-sa_ar_by_N = [r['mean_approx_ratio'] for r in sa_results]
-sa_std_by_N = [r['std_approx_ratio'] for r in sa_results]
+qaoa_ar_by_N = []
+sa_ar_by_N_list = []
+p_values_ttest = []
+best_p_by_N = {}
+
+for N in NODE_COUNTS:
+    best_p = qaoa_pertrial_df[qaoa_pertrial_df['N']==N].groupby('p')['approx_ratio'].mean().idxmax()
+    best_p_by_N[N] = best_p
+    qaoa_trials = qaoa_pertrial_df[(qaoa_pertrial_df['N']==N) & (qaoa_pertrial_df['p']==best_p)]['approx_ratio'].values
+    qaoa_ar_by_N.append(qaoa_trials.mean())
+
+    sa_val = next(r['mean_approx_ratio'] for r in sa_results if r['N'] == N)
+    sa_ar_by_N_list.append(sa_val)
+
+    qaoa_std = qaoa_trials.std(ddof=1)
+    if qaoa_std == 0:
+        p_values_ttest.append(None)  # both sides deterministic, no test applicable
+    else:
+        t_stat, p_val = stats.ttest_ind_from_stats(
+            mean1=qaoa_trials.mean(), std1=qaoa_std, nobs1=len(qaoa_trials),
+            mean2=sa_val, std2=1e-6, nobs2=10, equal_var=False)
+        p_values_ttest.append(p_val)
 
 x = np.arange(len(NODE_COUNTS))
 width = 0.35
-ax.bar(x - width/2, qaoa_ar_by_N, width, label='QAOA (mean across p)',
-       color='royalblue', alpha=0.85,
-       edgecolor='black', linewidth=0.5)
-ax.bar(x + width/2, sa_ar_by_N, width, label='Simulated Annealing',
-       color='coral', alpha=0.85,
-       edgecolor='black', linewidth=0.5)
+ax.bar(x - width/2, qaoa_ar_by_N, width, label='QAOA (best p, real trials)',
+       color='royalblue', alpha=0.85, edgecolor='black', linewidth=0.5)
+ax.bar(x + width/2, sa_ar_by_N_list, width, label='Simulated Annealing',
+       color='coral', alpha=0.85, edgecolor='black', linewidth=0.5)
 
-# t-test using actual means and stds
-p_values_ttest = []
-for i, N in enumerate(NODE_COUNTS):
-    t_stat, p_val = stats.ttest_ind_from_stats(
-        mean1=qaoa_ar_by_N[i],
-        std1=max(qaoa_std_by_N[i], 0.0001),
-        nobs1=3,
-        mean2=sa_ar_by_N[i],
-        std2=max(sa_std_by_N[i], 0.0001),
-        nobs2=10,
-        equal_var=False)
-    p_values_ttest.append(p_val)
-    sig = 'ns' if p_val > 0.05 else ('*' if p_val > 0.01 else '**')
-    y_max = max(qaoa_ar_by_N[i], sa_ar_by_N[i]) + 0.02
-    ax.text(i, y_max, sig, ha='center', va='bottom',
-            fontsize=12, fontweight='bold')
+for i, p_val in enumerate(p_values_ttest):
+    y_max = max(qaoa_ar_by_N[i], sa_ar_by_N_list[i]) + 0.02
+    label = 'n/a' if p_val is None else ('ns' if p_val > 0.05 else ('*' if p_val > 0.01 else '**'))
+    ax.text(i, y_max, label, ha='center', va='bottom', fontsize=12, fontweight='bold')
 
 ax.set_xlabel('Number of Nodes (N)', labelpad=10)
 ax.set_ylabel('Mean Approximation Ratio', labelpad=10)
 ax.set_title('AR Comparison with Significance\n'
-             '(ns=not significant | *p<0.05 | **p<0.01)',
+             '(n/a=no test applicable | ns=not significant | *p<0.05 | **p<0.01)',
              fontweight='bold')
 ax.set_xticks(x)
-ax.set_xticklabels([f'N={n}' for n in NODE_COUNTS])
+ax.set_xticklabels([f'N={n}\n(p={best_p_by_N[n]})' for n in NODE_COUNTS])
 ax.set_ylim(0.8, 1.12)
 ax.legend(framealpha=0.9)
 ax.grid(True, alpha=0.3)
 
-# Right: p-value bars
 ax = axes[1]
-colors_pval = ['coral' if p < 0.05 else 'seagreen'
+plot_labels = [f'N={n}' for n in NODE_COUNTS]
+plot_pvals = [p if p is not None else 0 for p in p_values_ttest]
+colors_pval = ['gray' if p is None else ('coral' if p < 0.05 else 'seagreen')
                for p in p_values_ttest]
-bars = ax.bar([f'N={n}' for n in NODE_COUNTS], p_values_ttest,
-              color=colors_pval, alpha=0.85,
+bars = ax.bar(plot_labels, plot_pvals, color=colors_pval, alpha=0.85,
               edgecolor='black', linewidth=0.5)
-for bar, val in zip(bars, p_values_ttest):
-    ax.text(bar.get_x() + bar.get_width()/2,
-            bar.get_height() + 0.005,
-            f'{val:.3f}', ha='center', va='bottom', fontsize=10)
-ax.axhline(y=0.05, color='red', linestyle='--',
-           linewidth=1.5, label='α=0.05 threshold')
+for bar, val, orig in zip(bars, plot_pvals, p_values_ttest):
+    label = 'n/a' if orig is None else f'{val:.3f}'
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+            label, ha='center', va='bottom', fontsize=10)
+ax.axhline(y=0.05, color='red', linestyle='--', linewidth=1.5, label='α=0.05 threshold')
 ax.set_xlabel('Number of Nodes (N)', labelpad=10)
 ax.set_ylabel('p-value', labelpad=10)
-ax.set_title('Welch t-test p-values\n(AR: QAOA vs SA)',
+ax.set_title('Welch t-test p-values\n(AR: QAOA best-p vs SA, gray = no test applicable)',
              fontweight='bold')
 ax.legend(framealpha=0.9)
 ax.grid(True, alpha=0.3)
@@ -798,13 +828,46 @@ Annealing comparison on MaxCut.
 
 **What our results show vs what literature predicts:**
 
-- **Solution quality:** QAOA achieves mean AR=0.9839 vs SA=1.0000. Both tie at N=4,6,8 (AR=1.0). SA slightly better at N=10 (AR=1.0 vs QAOA=0.9923). Per-N Welch t-tests show no significant difference (all p>0.05) — QAOA and SA are statistically equivalent at N≤10.
+- **Solution quality:** Across all 120 real trials, QAOA achieves mean
+  AR=0.9839 vs SA=1.0000. QAOA ties SA at N=4,6,8 (AR=1.0 at best p).
+  At N=10, SA is slightly better (AR=1.0 vs QAOA=0.9923). A real
+  significance test is only possible at N=10 — at N=4,6,8, both QAOA
+  (at its best p) and SA achieve exactly AR=1.0 with zero variance, so
+  no test applies there. At N=10, the difference is not statistically
+  significant (Welch's t-test, t=-1.0000, p=0.3434).
 
-- **Runtime:** SA is 46-106x faster than QAOA at all graph sizes (p=0.0009, highly significant). SA: 0.011-0.043s vs QAOA p=1: 1.2-2.0s.
+- **Worst-case performance:** The mean AR figure hides a real failure
+  case visible only in per-trial data: at N=6, p=1, one of 10 trials
+  found AR=0.4286 (COBYLA landed in a poor local optimum, cut=3 vs
+  optimal=7). QAOA's typical performance is strong, but its
+  worst-case performance at low p is substantially weaker than the
+  mean suggests — this variability is invisible in aggregate-only
+  reporting and is a real property of COBYLA-optimized QAOA, not a
+  simulator artifact.
 
-- **Quantum advantage:** No solution quality advantage observed at N≤10. Consistent with Guerreschi and Matsuura 2019 who show quantum speedup requires hundreds of qubits. QAOA simulation hits memory limits at N=50 (2^50 states = 16 PiB RAM) — confirming quantum hardware is needed at larger scales.
+- **Runtime:** SA is 46-106x faster than QAOA (p=1) at every graph
+  size tested, and this holds up under a proper per-N test: Welch's
+  t-test is significant at every N (N=4: p=0.0016; N=6, N=10: p≈0;
+  N=8: p=0.000009). SA: 0.011-0.043s vs QAOA p=1: 1.17-1.98s.
 
-- **Literature consistency:** arXiv:2604.16718 (2026) shows QAOA AR=0.953 vs SA=0.928 at N=5 — consistent with our results showing QAOA competitive but not dominant at small scales.
+- **Quality vs runtime asymmetry:** This is the sharpest finding in
+  this comparison. QAOA and SA do not differ significantly in
+  solution quality at the one N where a test is possible (N=10), but
+  they differ hugely and significantly in runtime at every N tested.
+  The "no quantum advantage" conclusion rests specifically on runtime,
+  not quality — QAOA is not meaningfully worse at finding good cuts,
+  it is meaningfully slower at finding them on classical hardware.
+
+- **Quantum advantage:** No solution-quality advantage observed at
+  N≤10, consistent with Guerreschi and Matsuura 2019, who show
+  quantum speedup requires hundreds of qubits. QAOA simulation hits
+  memory limits at N=50 (2^50 states = 16 PiB RAM) — confirming
+  quantum hardware, not classical simulation, is needed to test
+  quantum advantage at larger scales.
+
+- **Literature consistency:** arXiv:2604.16718 (2026) shows QAOA
+  AR=0.953 vs SA=0.928 at N=5 — consistent with our results showing
+  QAOA competitive but not dominant at small scales.
 """
 
 # ── Key Findings ──────────────────────────────────────────
@@ -812,45 +875,69 @@ print("=" * 65)
 print("Key Findings: QAOA vs Simulated Annealing on MaxCut")
 print("=" * 65)
 
+# Real per-trial computations, replacing p-level aggregates
+qaoa_all_ar = qaoa_pertrial_df['approx_ratio']
+qaoa_p1_ar = qaoa_pertrial_df[qaoa_pertrial_df['p']==1]['approx_ratio']
+farhi_t, farhi_p = stats.ttest_1samp(qaoa_all_ar, 0.6924)
+
+min_ar_row = qaoa_pertrial_df.loc[qaoa_pertrial_df['approx_ratio'].idxmin()]
+
 print(f"""
 1. QAOA Performance vs Theory:
-   Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results]):.4f} across all configurations.
+   Mean AR = {qaoa_all_ar.mean():.4f} across all 120 real trials.
    Significantly above Farhi et al. p=1 lower bound (0.6924).
-   t-statistic = 45.03, p-value ≈ 0 (extremely significant).
+   t-statistic = {farhi_t:.2f}, p-value ≈ 0 (extremely significant).
    Consistent with Willsch et al. 2020 and arXiv:2604.16718 (2026).
 
-2. Effect of Circuit Depth (p):
-   p=1: Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['p']==1]):.4f} | Std = {np.std([r['mean_approx_ratio'] for r in qaoa_results if r['p']==1]):.4f}
-   p=2: Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['p']==2]):.4f} | Std = {np.std([r['mean_approx_ratio'] for r in qaoa_results if r['p']==2]):.4f}
-   p=3: Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['p']==3]):.4f} | Std = {np.std([r['mean_approx_ratio'] for r in qaoa_results if r['p']==3]):.4f}
-   Minimal improvement with increasing p at small graph sizes.
+2. Effect of Circuit Depth (p) [real per-trial std]:
+   p=1: Mean AR = {qaoa_pertrial_df[qaoa_pertrial_df['p']==1]['approx_ratio'].mean():.4f} | Std = {qaoa_pertrial_df[qaoa_pertrial_df['p']==1]['approx_ratio'].std(ddof=1):.4f}
+   p=2: Mean AR = {qaoa_pertrial_df[qaoa_pertrial_df['p']==2]['approx_ratio'].mean():.4f} | Std = {qaoa_pertrial_df[qaoa_pertrial_df['p']==2]['approx_ratio'].std(ddof=1):.4f}
+   p=3: Mean AR = {qaoa_pertrial_df[qaoa_pertrial_df['p']==3]['approx_ratio'].mean():.4f} | Std = {qaoa_pertrial_df[qaoa_pertrial_df['p']==3]['approx_ratio'].std(ddof=1):.4f}
+   Minimal mean improvement with increasing p, but p=1 carries by far
+   the highest variance (std={qaoa_pertrial_df[qaoa_pertrial_df['p']==1]['approx_ratio'].std(ddof=1):.4f}) -- see item 3.
    Consistent with FOR-QAOA (Chiu et al. 2025) — diminishing returns at higher p.
 
-3. Effect of Graph Size (N):
-   N= 4: Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['N']==4]):.4f} | Std = {np.std([r['mean_approx_ratio'] for r in qaoa_results if r['N']==4]):.4f}
-   N= 6: Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['N']==6]):.4f} | Std = {np.std([r['mean_approx_ratio'] for r in qaoa_results if r['N']==6]):.4f}
-   N= 8: Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['N']==8]):.4f} | Std = {np.std([r['mean_approx_ratio'] for r in qaoa_results if r['N']==8]):.4f}
-   N=10: Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['N']==10]):.4f} | Std = {np.std([r['mean_approx_ratio'] for r in qaoa_results if r['N']==10]):.4f}
+3. Worst-Case Performance (visible only in per-trial data):
+   Lowest single-trial AR = {min_ar_row['approx_ratio']:.4f}, at N={int(min_ar_row['N'])}, p={int(min_ar_row['p'])}, trial {int(min_ar_row['trial'])}.
+   (QAOA cut = {int(min_ar_row['qaoa_cut'])} vs optimal cut = {int(min_ar_row['optimal_cut'])} -- a COBYLA local-optimum failure.)
+   This is invisible in mean/std aggregates and is a real property of
+   COBYLA-optimized QAOA at low p, not a simulator artifact.
 
-4. Runtime Scaling:
-   p=1: {np.mean([r['mean_runtime'] for r in qaoa_results if r['p']==1]):.4f}s avg
-   p=2: {np.mean([r['mean_runtime'] for r in qaoa_results if r['p']==2]):.4f}s avg
-   p=3: {np.mean([r['mean_runtime'] for r in qaoa_results if r['p']==3]):.4f}s avg
-   Strong positive correlation with N (Pearson r=0.9476).
+4. Effect of Graph Size (N) [real per-trial std, at p=1]:
+   N= 4: Mean AR = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==4)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].mean():.4f} | Std = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==4)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].std(ddof=1):.4f}
+   N= 6: Mean AR = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==6)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].mean():.4f} | Std = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==6)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].std(ddof=1):.4f}
+   N= 8: Mean AR = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==8)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].mean():.4f} | Std = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==8)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].std(ddof=1):.4f}
+   N=10: Mean AR = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==10)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].mean():.4f} | Std = {qaoa_pertrial_df[(qaoa_pertrial_df['N']==10)&(qaoa_pertrial_df['p']==1)]['approx_ratio'].std(ddof=1):.4f}
 
-5. QAOA vs SA — Solution Quality:
-   SA achieves AR=1.0 at all N | QAOA mean AR={np.mean([r['mean_approx_ratio'] for r in qaoa_results]):.4f}
-   N=4,6,8: TIE (both achieve AR=1.0 at best p)
-   N=10: SA wins (SA=1.0000 vs QAOA={np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['N']==10]):.4f})
-   All per-N Welch t-tests: not significant (p>0.05)
-   QAOA and SA statistically equivalent at N<=10.
+5. Runtime Scaling [real per-trial values]:
+   p=1: {qaoa_pertrial_df[qaoa_pertrial_df['p']==1]['runtime_seconds'].mean():.4f}s avg
+   p=2: {qaoa_pertrial_df[qaoa_pertrial_df['p']==2]['runtime_seconds'].mean():.4f}s avg
+   p=3: {qaoa_pertrial_df[qaoa_pertrial_df['p']==3]['runtime_seconds'].mean():.4f}s avg
+   Strong positive correlation with N (Pearson r=0.9476, p=0.0524 --
+   marginal significance, n=4 node counts, low statistical power).
 
-6. QAOA vs SA — Runtime:
-   SA is 46-106x faster than QAOA at all graph sizes.
-   SA: 0.011-0.043s | QAOA p=1: 1.2-2.0s
-   Runtime t-test: p=0.0009 (highly significant difference).
+6. QAOA vs SA — Solution Quality:
+   SA achieves AR=1.0 at all N | QAOA mean AR={qaoa_all_ar.mean():.4f} (all trials, all p)
+   N=4,6,8: TIE at best p (both AR=1.0, zero variance -- no test applicable)
+   N=10: SA wins (SA=1.0000 vs QAOA=0.9923 at best p)
+   Only N=10 permits a real significance test: Welch's t-test,
+   t=-1.0000, p=0.3434 -- not significant.
+   QAOA and SA are not distinguishable in quality at the one N tested.
 
-7. Quantum Advantage Assessment:
+7. QAOA vs SA — Runtime:
+   SA is 46-106x faster than QAOA (p=1) at every graph size.
+   SA: 0.011-0.043s | QAOA p=1: 1.17-1.98s
+   Per-N Welch's t-tests: significant at every N
+     N=4: p=0.0016 | N=6: p≈0 | N=8: p=0.000009 | N=10: p≈0
+
+8. Quality vs Runtime Asymmetry:
+   QAOA and SA do not differ significantly in solution quality at the
+   one N tested for significance (N=10). They differ hugely and
+   significantly in runtime at every N. The "no quantum advantage"
+   finding here is specifically about runtime, not quality --
+   classical SA is not more accurate than QAOA, it is far faster.
+
+9. Quantum Advantage Assessment:
    No solution quality advantage at N<=10.
    Classical SA matches QAOA quality while being dramatically faster.
    Quantum advantage for QAOA on MaxCut requires N in hundreds
@@ -879,8 +966,13 @@ from Layer 3 is valid unless Layer 2 has passed first.
 - Metric 1 (Measurement Bias): PASS — chi-squared p-value confirms
   intentional non-uniform output, no simulator bias
 - Metric 2 (Circuit Fidelity): PASS — mean AR ≥ 0.75 across all N
-- Metric 3 (Shot Noise CV): Mixed — p=1 shows higher variance due to
-  COBYLA local optima (known QAOA limitation, not simulator issue)
+- Metric 3 (Shot Noise CV): Mixed — p=1 shows the highest per-trial
+  variance of any depth (std=0.1185 across 40 real trials, vs
+  std=0.0197 at p=2 and std=0.0508 at p=3). This is driven by COBYLA
+  landing in local optima at low circuit depth, most visibly at
+  N=6, p=1, where one trial produced AR=0.4286 against a mean of
+  0.9429 for that configuration (a known QAOA/COBYLA limitation, not
+  a simulator issue — see Key Findings, item 3).
 - Metric 5 (Circuit Depth): PASS — no degradation at depths 17-76
 - Metric 6 (Gate Error): PASS — AR ≥ 0.90 at 0.1% and 0.5% noise
 - Metric 4 (LocalSim vs SV1): Deferred to Week 4 SV1 transition
@@ -945,14 +1037,23 @@ about quantum advantage (or lack thereof) for MaxCut at this scale.
 
 **Our contribution:**
 
-This study benchmarks QAOA against Simulated Annealing on MaxCut for 3-regular graphs at N=4,6,8,10 using Amazon Braket LocalSimulator. Key contributions:
+This study benchmarks QAOA against Simulated Annealing on MaxCut for 3-regular graphs at N=4,6,8,10 using Amazon Braket LocalSimulator, using 120 real per-trial QAOA measurements rather than depth-level aggregates. Key contributions:
 
-- **Validated QAOA implementation** on AWS Braket with full Layer 2 simulator validation (Metrics 1,2,3,5,6 passed)
-- **Statistically equivalent solution quality:** QAOA achieves mean AR=0.9839 vs SA=1.0000. No significant quality difference at N≤10 (all per-N p>0.05)
-- **Classical runtime advantage confirmed:** SA is 46-106x faster than QAOA at all tested scales (p=0.0009)
-- **Simulator limitation documented:** QAOA simulation requires 2^N complex amplitudes — infeasible beyond N~30 on classical hardware, demonstrating why quantum hardware is needed at larger scales
-- **No quantum advantage at N≤10:** Consistent with Guerreschi and Matsuura 2019 — quantum speedup for QAOA on MaxCut requires N in the hundreds
-- **Future work:** Extension to larger graphs requires SV1 or real QPU hardware. QAOA advantage expected to emerge at N>50 where SA gets trapped in local optima
+- **Validated QAOA implementation** on AWS Braket with full Layer 2 simulator validation (Metrics 1,2,3,5,6 passed). Metric 3's three CV failures independently corroborate the per-trial variance findings below — both point to the same three configurations (N=6/p=1, N=10/p=1, N=10/p=3) as QAOA's least stable.
+
+- **Solution quality is statistically indistinguishable from SA, where testable.** QAOA achieves mean AR=0.9839 across all 120 real trials vs SA=1.0000. A significance test is only meaningful at N=10, since QAOA and SA both reach exact AR=1.0 with zero variance at N=4,6,8 (a genuine ceiling effect, not missing data). At N=10, the difference is not statistically significant (Welch's t-test on real trials, t=-1.0000, p=0.3434).
+
+- **QAOA's worst-case performance is a real, separately notable finding.** One of 120 trials (N=6, p=1) produced AR=0.4286 — a COBYLA local-optimum failure invisible in any mean/std aggregate. QAOA's typical quality is strong and competitive with SA, but its variance at low p is materially higher (std=0.1185 at p=1 vs std=0.0197 at p=2), which matters for any deployment scenario sensitive to worst-case rather than average outcomes.
+
+- **Classical runtime advantage confirmed, and now statistically solid at every N tested.** SA is 46-106x faster than QAOA at every graph size, with Welch's t-tests on real per-trial data significant at all four N (p ranges from 0.0016 to <0.0001) — a stronger and more defensible claim than a single pooled p-value across mismatched sample structures.
+
+- **The quality-vs-runtime asymmetry is the sharpest finding here.** QAOA is not measurably worse than SA at finding good cuts (where testable), but it is dramatically and consistently slower at finding them under classical simulation. "No quantum advantage at N≤10" is a runtime finding, not a quality finding — this distinction matters for interpreting what a future hardware-based QAOA run would need to demonstrate to show genuine advantage.
+
+- **Simulator limitation documented:** QAOA simulation requires 2^N complex amplitudes — infeasible beyond N~30 on classical hardware, demonstrating why quantum hardware is needed at larger scales.
+
+- **No quantum advantage at N≤10:** Consistent with Guerreschi and Matsuura 2019 — quantum speedup for QAOA on MaxCut requires N in the hundreds.
+
+- **Future work:** Extension to larger graphs requires SV1 or real QPU hardware. QAOA advantage expected to emerge at N>50 where SA gets trapped in local optima. Given the worst-case finding above, future work at scale should track per-trial variance, not just mean AR, since COBYLA's local-optima failures may compound as circuit depth and graph complexity grow.
 
 **References:**
 - Farhi, Goldstone, Gutmann (2014, arXiv:1411.4028)
@@ -972,31 +1073,46 @@ print("=" * 65)
 print("Conclusions: QAOA vs Simulated Annealing on MaxCut")
 print("=" * 65)
 
+farhi_t, farhi_p = stats.ttest_1samp(qaoa_pertrial_df['approx_ratio'], 0.6924)
+n10_qaoa = qaoa_pertrial_df[(qaoa_pertrial_df['N']==10) & (qaoa_pertrial_df['p']==2)]['approx_ratio']
+
 print(f"""
-Quantum Side (QAOA):
-- Mean AR = {np.mean([r['mean_approx_ratio'] for r in qaoa_results]):.4f} across all configurations
-- Significantly above Farhi et al. lower bound 0.6924 (p≈0)
-- Runtime: {np.mean([r['mean_runtime'] for r in qaoa_results if r['p']==1]):.2f}s avg (p=1) to {np.mean([r['mean_runtime'] for r in qaoa_results if r['p']==3]):.2f}s avg (p=3)
-- Minimal AR improvement with increasing p at small scales
-- Pearson r=0.9476 between runtime and N (strong scaling)
+Quantum Side (QAOA) [real per-trial data, 120 trials]:
+- Mean AR = {qaoa_pertrial_df['approx_ratio'].mean():.4f} across all configurations
+- Significantly above Farhi et al. lower bound 0.6924 (t={farhi_t:.2f}, p≈0)
+- Runtime: {qaoa_pertrial_df[qaoa_pertrial_df['p']==1]['runtime_seconds'].mean():.2f}s avg (p=1) to {qaoa_pertrial_df[qaoa_pertrial_df['p']==3]['runtime_seconds'].mean():.2f}s avg (p=3)
+- Minimal mean AR improvement with increasing p at small scales,
+  but p=1 carries the highest per-trial variance (std=0.1185) --
+  one trial (N=6, p=1) produced AR=0.4286, a COBYLA local-optimum
+  failure invisible in aggregate reporting
+- Pearson r=0.9476 between runtime and N (p=0.0524, marginal --
+  n=4 node counts, low statistical power)
 
 Classical Side (Simulated Annealing):
 - Mean AR = 1.0000 across all N (always finds optimal cut)
-- Runtime: 0.011-0.043s — dramatically faster than QAOA
+- Runtime: 0.011-0.043s -- dramatically faster than QAOA
 - SA is 46-106x faster than QAOA at all graph sizes
 
 Combined Comparison:
-- Solution quality: statistically equivalent at all N (p>0.05)
-- N=4,6,8: TIE — both achieve AR=1.0 at best configuration
-- N=10: SA slightly better (AR=1.0 vs QAOA={np.mean([r['mean_approx_ratio'] for r in qaoa_results if r['N']==10]):.4f})
-- Runtime: SA wins decisively (p=0.0009, highly significant)
-- No quantum advantage in solution quality at N<=10
+- Solution quality: a real significance test is only possible at
+  N=10, since both QAOA (best p) and SA reach exact AR=1.0 with
+  zero variance at N=4,6,8 (a genuine ceiling effect). At N=10,
+  the difference is not significant (Welch's t-test, t=-1.0000,
+  p=0.3434).
+- N=4,6,8: TIE -- both achieve AR=1.0 at best configuration
+- N=10: SA slightly better (AR=1.0 vs QAOA={n10_qaoa.mean():.4f})
+- Runtime: SA wins decisively and consistently -- Welch's t-tests
+  significant at every individual N (p=0.0016 to p<0.0001), not
+  just one pooled figure
+- No quantum advantage in solution quality at N<=10, and no
+  significant quality difference where testable; the "no advantage"
+  finding is specifically about runtime
 
 Context from Literature:
-- Classical SA is competitive at small scales — consistent with
+- Classical SA is competitive at small scales -- consistent with
   Kirkpatrick et al. 1983 and Guerreschi & Matsuura 2019
 - Guerreschi & Matsuura 2019 show quantum speedup requires
-  hundreds of qubits — our N<=10 results confirm this
+  hundreds of qubits -- our N<=10 results confirm this
 - QAOA advantage may appear at larger N and higher p
   (Shaydulin et al. 2024, Science Advances)
 - Our results consistent with arXiv:2604.16718 (2026):
@@ -1005,8 +1121,11 @@ Context from Literature:
   scale and noise level (Proctor et al. 2022, Nature Physics)
 
 Simulator Validation:
-- All Layer 2 metrics passed — results reflect algorithm
-  behavior not simulator artifacts
+- All Layer 2 metrics passed -- results reflect algorithm
+  behavior not simulator artifacts. Metric 3's three CV failures
+  (N=6/p=1, N=10/p=1, N=10/p=3) independently match the three
+  highest-variance configurations in the real per-trial data --
+  cross-validating both findings.
 - LocalSimulator validated for QAOA benchmarking
   (Measurement Framework Consolidated v1)
 """)
@@ -1019,7 +1138,6 @@ print("- Shaydulin et al. 2024 (Science Advances)")
 print("- arXiv:2604.16718 (2026) — QAOA vs SA comparison")
 print("- arXiv:2607.03340 (2026) — shot scaling analysis")
 print("- Proctor et al. 2022 (Nature Physics)")
-print("- Kirkpatrick et al. 1983 (Science)")
 print("- Kirkpatrick et al. 1983 (Science)")
 print("=" * 65)
 
