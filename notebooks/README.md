@@ -5,34 +5,37 @@ contains the src code for the experiments conducted respectively.
 
 ---
 
-### Classical Computing Experiments - Classes and Functions
+### Classical Computing Experiments
 
 *   **`Diffie Helman`**: 
-        ```python
-        class diffie_helman()
-        def key_exchange()
-        attack_scenarios = {}
-        ```
+    ```python
+    class diffie_helman():
+    def key_exchange():
+    attack_scenarios = {}
+    ```
+
 *   **`Linear Search`**: 
-        ```python
-        class linear_search()
-        def search()
-        def generate_array()
-        def benchmark_search()
-        ```
+    ```python
+    class linear_search():
+    def search():
+    def generate_array():
+    def benchmark_search():
+    ```
+
 *   **`Max Cut Solver`**: 
-        ```python
-        class simulated_annealing()
-        def solve()
-        def generate_regular_graph()
-        ```
+    ```python
+    class simulated_annealing():
+    def solve():
+    def generate_regular_graph():
+    ```
+
 *   **`Pseudo RNG MT19937`**: 
-        ```python
-        class mt19937()
-        def initialize_generator(seed)
-        def extract_number()
-        def twist()
-        ```
+    ```python
+    class mt19937():
+    def initialize_generator(seed):
+    def extract_number():
+    def twist():
+    ```
 
 ### Quantum Computing Experiments
 
