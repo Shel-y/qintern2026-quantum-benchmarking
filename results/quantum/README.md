@@ -18,15 +18,15 @@ All experiment results are standardized into the following formats for easy pars
 Select an experiment below to view its comprehensive breakdown, including detailed plots and technical analysis.
 
 #### Quantum Random Number Generator (QRNG)
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+> 📊 **[View Detailed Plots and Analysis](results/qrng/RESULTS.md)**
 
 #### Quantum Approximate Optimization Algorithm (QAOA)
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+> 📊 **[View Detailed Plots and Analysis](results/qaoa/RESULTS.md)**
 
 #### Grover Search
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+> 📊 **[View Detailed Plots and Analysis](results/grover_search/RESULTS.md)**
 
 #### BB84 Quantum Key Distribution
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+> 📊 **[View Detailed Plots and Analysis](results/bb84/RESULTS.md)**
 
 ---
