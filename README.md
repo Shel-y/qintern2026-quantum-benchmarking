@@ -4,6 +4,31 @@
 
 Comparative benchmarking of classical vs. simulated quantum algorithms (RNG, Search, QAOA, BB84) on Amazon Braket — QIntern 2026.
 
+## REPO LAYOUT
+
+```text
+docs/
+├── assets/
+│   └── QIntern2026.jpeg                                     
+├── .env.example                                   # Environment variables examples
+├── literature_review.md                           # Relevant literature aggregation
+├── measurement_framework_consolidated.md          # Measurement framework across project roles 
+├── metrics_for_benchmarking.md                    # Experiment metrics 
+│
+infrastructure/
+├── README.md                                      # Description for the project's infrastructure
+│
+notebooks/
+├── classical/
+│      ├── diffie_hellman/
+│      ├── linear_search/
+│      ├── max_cut_solver/
+│      └── prng_mt19937/
+│
+│       
+                  
+```
+
 ### CLASSICAL ALGORITHMS AVG PERFORMANCE 
 
 | Algorithm | Input Size Range | Avg Execution Time (ms) | Avg Operations / Sec |
