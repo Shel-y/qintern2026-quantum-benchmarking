@@ -6,12 +6,12 @@ Comparative benchmarking of classical vs. simulated quantum algorithms (RNG, Sea
 
 ## CLASSICAL ALGORITHMS
 
-| Algorithm | Execution Time (ms) | Memory Usage (MB) | Operations / Sec 
+| Algorithm | Avg Execution Time (ms) | Avg Memory Usage (MB) | Avg Operations / Sec 
 | :--- | ---: | ---: | ---: 
-| **Diffie Helman** | ~0.832 s | ~0.013 MB | ~19,845 | 
-| **Linear Search** | 89.5 | 65.4 | 25,100 | 
-| **PRNG MT19937** | 210.8 | 31.0 | 8,900 | 
-| **Max Cut Solver** | 210.8 | 31.0 | 8,900 | 
+| **Diffie Helman** | 826.16 | ~0.013 MB | ~19,845 | 
+| **Linear Search** | 5.95| 112.76 MB | ~3,325,443 elements| 
+| **PRNG MT19937** | 2.18 | 173.99 MB | ~20,734,396 bits | 
+| **Max Cut Solver** | 22.91 | 157.07 MB | ~340.67 operations | 
 
 ## QUANTUM ALGORITHMS
 
