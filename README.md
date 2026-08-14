@@ -4,9 +4,8 @@
 
 Comparative benchmarking of classical vs. simulated quantum algorithms (RNG, Search, QAOA, BB84) on Amazon Braket — QIntern 2026.
 
-## CLASSICAL ALGORITHMS
+## CLASSICAL ALGORITHMS PERFORMANCE
 
-**PERFORMANCE**
 | Algorithm | Avg Execution Time (ms) | Avg Operations / Sec 
 | :--- | ---: | ---: 
 | **Diffie Helman** | 826.16 | ~19,720 bits | 
@@ -14,7 +13,7 @@ Comparative benchmarking of classical vs. simulated quantum algorithms (RNG, Sea
 | **PRNG MT19937** | 2.18 | ~20,734,396 bits | 
 | **Max Cut Solver** | 22.91 | ~340.67 nodes | 
 
-## QUANTUM ALGORITHMS
+## QUANTUM ALGORITHMS PERFORMANC
 
 | Algorithm | Avg Execution Time (ms) | Avg Operations / Sec | 
 | :--- | ---: | ---: |
