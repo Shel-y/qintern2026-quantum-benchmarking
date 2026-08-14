@@ -18,15 +18,40 @@ docs/
 infrastructure/
 ├── README.md                                      # Description for the project's infrastructure
 │
-notebooks/
+notebooks/                                         # .ipynb and .py src codes
 ├── classical/
-│      ├── diffie_hellman/
-│      ├── linear_search/
-│      ├── max_cut_solver/
-│      └── prng_mt19937/
+│    │   ├── diffie_hellman/
+│    │   ├── linear_search/
+│    │   ├── max_cut_solver/
+│    │   └── prng_mt19937/
+│    │
+│    │
+│   quantum/       
+│        ├── BB84 Comparison/
+│        ├── QAOA Comparison/
+│        ├── bb84/
+│        ├── grover_search/
+│        ├── qaoa/
+│        └── qrng/
 │
-│       
-                  
+│
+results                                          # Experiment results: JSONs, CSVs, Graphs
+├── classical/
+│    │   ├── diffie_hellman/
+│    │   ├── linear_search/
+│    │   ├── max_cut_solver/
+│    │   └── prng_mt19937/
+│    │
+│    │
+│   quantum/       
+│        ├── bb84/
+│        ├── grover_search/
+│        ├── qaoa/
+│        └── qrng/
+│
+├── GUIDE.md                                    # Reproducibility guide
+├── README.md                                   # Main README              
+└── requirements.txt                            # Dependencies to be installed for reproducing
 ```
 
 ### CLASSICAL ALGORITHMS AVG PERFORMANCE 
