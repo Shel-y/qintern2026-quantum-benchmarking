@@ -6,18 +6,19 @@ Comparative benchmarking of classical vs. simulated quantum algorithms (RNG, Sea
 
 ## CLASSICAL ALGORITHMS
 
-| Algorithm | Avg Execution Time (ms) | Avg Memory Usage (MB) | Avg Operations / Sec 
-| :--- | ---: | ---: | ---: 
-| **Diffie Helman** | 826.16 | ~0.013 MB | ~19,845 | 
-| **Linear Search** | 5.95| 112.76 MB | ~3,325,443 elements| 
-| **PRNG MT19937** | 2.18 | 173.99 MB | ~20,734,396 bits | 
-| **Max Cut Solver** | 22.91 | 157.07 MB | ~340.67 operations | 
+**PERFORMANCE**
+| Algorithm | Avg Execution Time (ms) | Avg Operations / Sec 
+| :--- | ---: | ---: 
+| **Diffie Helman** | 826.16 | ~19,720 bits | 
+| **Linear Search** | 5.95| ~3,325,443 elements| 
+| **PRNG MT19937** | 2.18 | ~20,734,396 bits | 
+| **Max Cut Solver** | 22.91 | ~340.67 nodes | 
 
 ## QUANTUM ALGORITHMS
 
-| Algorithm | Execution Time (ms) | Memory Usage (MB) | Operations / Sec | Notes |
-| :--- | ---: | ---: | ---: | :--- |
-| **BB84 QKD** | 145.2 | 42.1 | 12,450 | Baseline implementation |
-| **Grover Search** | 89.5 | 65.4 | 25,100 | Fast, but high memory overhead |
-| **QRNG** | 210.8 | 31.0 | 8,900 | Lightweight, but slower execution |
-| **QAOA** | 210.8 | 31.0 | 8,900 | Lightweight, but slower execution |
+| Algorithm | Avg Execution Time (ms) | Avg Operations / Sec | 
+| :--- | ---: | ---: |
+| **BB84 QKD** | ~7.5 | ~200-230 qubits |
+| **Grover Search** | ~224.05 | 37,168.5 queries |
+| **QRNG** | 65.5 | 2,108,116 bits | 
+| **QAOA** | 5370 | 440 shots | 
