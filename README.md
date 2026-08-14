@@ -13,7 +13,7 @@ Comparative benchmarking of classical vs. simulated quantum algorithms (RNG, Sea
 | **PRNG MT19937** | 2.18 | ~20,734,396 bits | 
 | **Max Cut Solver** | 22.91 | ~340.67 nodes | 
 
-## QUANTUM ALGORITHMS PERFORMANC
+## QUANTUM ALGORITHMS PERFORMANCE
 
 | Algorithm | Avg Execution Time (ms) | Avg Operations / Sec | 
 | :--- | ---: | ---: |
