@@ -53,6 +53,6 @@ pip install -r requirements.txt
 
 After the steps above have been accomplished, you may modify the experiment code according to your specifications and run them.
 
-If you would like to use our infrastructure, head over to ```/infrastructure``` and click the repository link provided on the readme file.
+If you would like to use our monitor tool, head over to ```/infrastructure``` and click the repository link provided on the readme file.
 
 Afterwards, follow the steps provided within the repository.
