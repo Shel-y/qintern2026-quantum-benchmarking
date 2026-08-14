@@ -19,5 +19,5 @@ Comparative benchmarking of classical vs. simulated quantum algorithms (RNG, Sea
 | :--- | ---: | ---: |
 | **BB84 QKD** | ~7.5 | ~200-230 qubits |
 | **Grover Search** | ~224.05 | 37,168.5 queries |
-| **QRNG** | 65.5 | 2,108,116 bits | 
+| **QRNG** | 65.5 | ~527,029 bits | 
 | **QAOA** | 5370 | 440 shots | 
