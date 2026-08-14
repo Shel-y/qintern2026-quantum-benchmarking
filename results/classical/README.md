@@ -1,4 +1,3 @@
-
 # Classical Experiment Results
 
 This repository contains the raw source files and output data generated from our suite of classical computing experiments. 
@@ -9,25 +8,25 @@ This repository contains the raw source files and output data generated from our
 
 All experiment results are standardized into the following formats for easy parsing and review:
 
-*   **`JSON`**: Raw summary of data.
-*   **`CSV`**: Raw results of classical experiments.
+*   **`CSV`**: Raw summary of data.
+*   **`JSON`**: Raw results of classical experiments.
 
 ---
 
 ### Experiment Directory
 
-Select an experiment below to view its comprehensive breakdown, including detailed plots and technical analysis.
+Select an experiment below to view its data summary and JSONs.
 
-#### Quantum Random Number Generator (QRNG)
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+#### Diffie Hellman Key Exchange
+> 📊 **[View Data Summary and JSONs](/Diffie_Helman)**
 
-#### Quantum Approximate Optimization Algorithm (QAOA)
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+#### Max Cut Solver
+> 📊 **[View Data Summary and JSONs](/max_cut_solver)**
 
-#### Grover Search
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+#### Linear Search
+> 📊 **[View Data Summary and JSONs](/Linear_Search)**
 
-#### BB84 Quantum Key Distribution
-> 📊 **[View Detailed Plots and Analysis](results/plots/RESULTS.md)**
+#### PRNG MT19937
+> 📊 **[View Data Summary and JSONs](/PRNG_MT19937)**
 
 ---
