@@ -59,7 +59,7 @@ results                                          # Experiment results: JSONs, CS
 | Algorithm | Input Size Range | Avg Execution Time (ms) | Avg Operations / Sec |
 | :--- | :--- | ---: | ---: |
 | **Diffie-Hellman** | 1,000 to 8,000 key bits | 826.16 | ~19,720 bits |
-| **Linear Search** | ~3.3M elements | 5.95 | ~3,325,443 elements |
+| **Linear Search** | N = 8 to 32 | 5.95 | ~3,325,443 elements |
 | **PRNG (MT19937)** | 10k to 80k output bits | 2.18 | ~20,734,396 bits |
 | **Max Cut Solver** | N = 4 to 10 nodes | 22.91 | ~340.67 nodes |
 
