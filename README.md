@@ -59,7 +59,7 @@ results                                          # Experiment results: JSONs, CS
 | Algorithm | Input Size Range | Avg Execution Time (ms) | Avg Operations / Sec |
 | :--- | :--- | ---: | ---: |
 | **Diffie-Hellman** | 1,000 to 8,000 key bits | 826.16 | ~19,720 bits |
-| **Linear Search** | N = 8 to 32 | 5.95 | ~3,325,443 elements |
+| **Linear Search** | N = 8 to 32 database size | 5.95 | ~3,325,443 elements |
 | **PRNG (MT19937)** | 10k to 80k output bits | 2.18 | ~20,734,396 bits |
 | **Max Cut Solver** | N = 4 to 10 nodes | 22.91 | ~340.67 nodes |
 
@@ -76,8 +76,14 @@ results                                          # Experiment results: JSONs, CS
 
 
 ## COMPARISON
-### BB84 QKD vs Diffie-Hellman
+### Diffie-Hellman vs BB84 QKD
 | Algorithm | Input Size Range | Avg Execution Time | Avg Operations / Sec |
 | :--- | :--- | ---: | ---: |
 | **Diffie-Hellman** | 1,000 to 8,000 key bits | 826.16 | ~19,720 bits/sec |
 | **BB84 QKD** | 1,000 to 8,000 qubits | 27,350.00 ms | ~130 qubits/sec |
+
+### Linear Search vs Grover Search
+| Algorithm | Input Size Range | Avg Success Probability |  |
+| :--- | :--- | ---: | ---: |
+| **Linear Search** |  N = 8 to 32 database size | 0.0 |  |
+| **Grover Search** |  N = 8 to 32 array size | 0.97655 |  |
