@@ -150,3 +150,10 @@ results                                          # Experiment results: JSONs, CS
 └── requirements.txt                            # Dependencies to be installed for reproducing
 
 ```
+
+## AUTHORS:
+
+* Sultana, Shahreen
+* Kapati, Kanish
+* Ghadge, Aman
+* Laroza. Anjelo
